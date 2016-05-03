@@ -2,20 +2,15 @@
 namespace UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\UserBundle\Model\User as BaseUser;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * User
- *
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\UserRepository")
  */
-// TODO : nullable=false et verifier champ validation
-class User extends BaseUser
-{
-    use TimestampableEntity;
-    /**
+class User{
+
+	/**
      * @var int
      *
      * @ORM\Column(name="id", type="integer")
@@ -25,9 +20,9 @@ class User extends BaseUser
     protected $id;
 
     /**
-     * @ORM\Column(name="firstname",type="string", length=25, nullable=true)
+     * @ORM\Column(name="name",type="string", length=25, nullable=true)
      */
-    protected $firstname;
+    protected $name;
 
     /**
      * @ORM\Column(name="lastname",type="string", length=25, nullable=true)
@@ -35,69 +30,55 @@ class User extends BaseUser
     protected $lastname;
 
     /**
-     * @ORM\Column(name="age",type="integer", nullable=true )
+     * @Gedmo\Slug(fields={"name", "lastname"}, updatable=false)
+     * @ORM\Column(length=255, unique=true)
      */
-    protected $age;
+    private $slug;
 
     /**
-     * @ORM\Column(name="admin_validation",type="boolean", nullable=true)
+     * @ORM\Column(name="description",type="string", length=25, nullable=true)
      */
-    protected $adminValidation;
+    protected $birth_date;
 
     /**
-     * @ORM\Column(name="date_signin", type="datetime", nullable=true)
-     */
-    protected $dateSignin;
-
-    /**
-     * @ORM\Column(name="address", type="string", length=60, nullable=true)
-     */
-    protected $address;
-
-    /**
-     * @ORM\Column(name="postalcode", type="integer", nullable=true)
-     */
-    protected $postalcode;
-
-    /**
-     * @ORM\Column(name="img", type="string", length=255, nullable=true)
-     */
-    protected $img;
+    * @ORM\ManyToOne(targetEntity="Account")
+    * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+    */
+    private $account;
 
 
     /**
      * Get id
      *
-     * @return int
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
     }
 
-
     /**
-     * Set firstname
+     * Set name
      *
-     * @param string $firstname
+     * @param string $name
      *
      * @return User
      */
-    public function setFirstname($firstname)
+    public function setName($name)
     {
-        $this->firstname = $firstname;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get firstname
+     * Get name
      *
      * @return string
      */
-    public function getFirstname()
+    public function getName()
     {
-        return $this->firstname;
+        return $this->name;
     }
 
     /**
@@ -125,242 +106,74 @@ class User extends BaseUser
     }
 
     /**
-     * Set age
+     * Set slug
      *
-     * @param \int $age
+     * @param string $slug
      *
      * @return User
      */
-    public function setAge(\int $age)
+    public function setSlug($slug)
     {
-        $this->age = $age;
+        $this->slug = $slug;
 
         return $this;
     }
 
     /**
-     * Get age
-     *
-     * @return \int
-     */
-    public function getAge()
-    {
-        return $this->age;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return User
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
+     * Get slug
      *
      * @return string
      */
-    public function getEmail()
+    public function getSlug()
     {
-        return $this->email;
+        return $this->slug;
     }
 
     /**
-     * Set validation
+     * Set birthDate
      *
-     * @param boolean $validation
+     * @param string $birthDate
      *
      * @return User
      */
-    public function setValidation($validation)
+    public function setBirthDate($birthDate)
     {
-        $this->validation = $validation;
+        $this->birth_date = $birthDate;
 
         return $this;
     }
 
     /**
-     * Get validation
-     *
-     * @return boolean
-     */
-    public function getValidation()
-    {
-        return $this->validation;
-    }
-
-    /**
-     * Set date
-     *
-     * @param \DateTime $date
-     *
-     * @return User
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return \DateTime
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    /**
-     * Set address
-     *
-     * @param string $address
-     *
-     * @return User
-     */
-    public function setAddress($address)
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    /**
-     * Get address
+     * Get birthDate
      *
      * @return string
      */
-    public function getAddress()
+    public function getBirthDate()
     {
-        return $this->address;
+        return $this->birth_date;
     }
 
     /**
-     * Set postalcode
+     * Set account
      *
-     * @param \int $postalcode
+     * @param \UserBundle\Entity\Account $account
      *
      * @return User
      */
-    public function setPostalcode(\int $postalcode)
+    public function setAccount(\UserBundle\Entity\Account $account = null)
     {
-        $this->postalcode = $postalcode;
+        $this->account = $account;
 
         return $this;
     }
 
     /**
-     * Get postalcode
+     * Get account
      *
-     * @return \int
+     * @return \UserBundle\Entity\Account
      */
-    public function getPostalcode()
+    public function getAccount()
     {
-        return $this->postalcode;
-    }
-
-    /**
-     * Set image
-     *
-     * @param string $image
-     *
-     * @return User
-     */
-    public function setImage($image)
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
-    /**
-     * Get image
-     *
-     * @return string
-     */
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-    /**
-     * Set img
-     *
-     * @param string $img
-     *
-     * @return User
-     */
-    public function setImg($img)
-    {
-        $this->img = $img;
-
-        return $this;
-    }
-
-    /**
-     * Get img
-     *
-     * @return string
-     */
-    public function getImg()
-    {
-        return $this->img;
-    }
-
-    /**
-     * Set adminValidation
-     *
-     * @param boolean $adminValidation
-     *
-     * @return User
-     */
-    public function setAdminValidation($adminValidation)
-    {
-        $this->adminValidation = $adminValidation;
-
-        return $this;
-    }
-
-    /**
-     * Get adminValidation
-     *
-     * @return boolean
-     */
-    public function getAdminValidation()
-    {
-        return $this->adminValidation;
-    }
-
-    /**
-     * Set dateSignin
-     *
-     * @param \DateTime $dateSignin
-     *
-     * @return User
-     */
-    public function setDateSignin($dateSignin)
-    {
-        $this->dateSignin = $dateSignin;
-
-        return $this;
-    }
-
-    /**
-     * Get dateSignin
-     *
-     * @return \DateTime
-     */
-    public function getDateSignin()
-    {
-        return $this->dateSignin;
+        return $this->account;
     }
 }
