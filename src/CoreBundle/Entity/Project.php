@@ -63,7 +63,19 @@ class Project
      */
     private $banner;
 
+    /**
+    * @var UserBunble\Entity\Association
+    *
+    * @ORM\ManyToOne(targetEntity="\UserBundle\Entity\Association")
+    * @ORM\JoinColumn(name="association_id", referencedColumnName="id")
+    */
+    private $association;
 
+    /**
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Promise", mappedBy="project", cascade={"persist"})
+     */
+    private $projectPromise;
+    
     /**
      * Get id
      *
@@ -193,5 +205,69 @@ class Project
     {
         return $this->banner;
     }
-}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->projectPromise = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
+    /**
+     * Set association
+     *
+     * @param \UserBundle\Entity\Association $association
+     *
+     * @return Project
+     */
+    public function setAssociation(\UserBundle\Entity\Association $association = null)
+    {
+        $this->association = $association;
+
+        return $this;
+    }
+
+    /**
+     * Get association
+     *
+     * @return \UserBundle\Entity\Association
+     */
+    public function getAssociation()
+    {
+        return $this->association;
+    }
+
+    /**
+     * Add projectPromise
+     *
+     * @param \CoreBundle\Entity\Promise $projectPromise
+     *
+     * @return Project
+     */
+    public function addProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
+    {
+        $this->projectPromise[] = $projectPromise;
+
+        return $this;
+    }
+
+    /**
+     * Remove projectPromise
+     *
+     * @param \CoreBundle\Entity\Promise $projectPromise
+     */
+    public function removeProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
+    {
+        $this->projectPromise->removeElement($projectPromise);
+    }
+
+    /**
+     * Get projectPromise
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProjectPromise()
+    {
+        return $this->projectPromise;
+    }
+}

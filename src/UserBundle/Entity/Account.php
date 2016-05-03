@@ -54,11 +54,11 @@ class Account extends BaseUser
      * @ORM\Column(name="img", type="string", length=255, nullable=true)
      */
     protected $img;
-    /**
-    * @ORM\ManyToOne(targetEntity="User")
-    * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-    */
 
+    /**
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Promise", mappedBy="account", cascade={"persist"})
+     */
+    protected $projectPromise;
 
     /**
      * Get id
@@ -212,5 +212,39 @@ class Account extends BaseUser
     public function getImg()
     {
         return $this->img;
+    }
+
+    /**
+     * Add projectPromise
+     *
+     * @param \CoreBundle\Entity\Promise $projectPromise
+     *
+     * @return Account
+     */
+    public function addProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
+    {
+        $this->projectPromise[] = $projectPromise;
+
+        return $this;
+    }
+
+    /**
+     * Remove projectPromise
+     *
+     * @param \CoreBundle\Entity\Promise $projectPromise
+     */
+    public function removeProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
+    {
+        $this->projectPromise->removeElement($projectPromise);
+    }
+
+    /**
+     * Get projectPromise
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProjectPromise()
+    {
+        return $this->projectPromise;
     }
 }

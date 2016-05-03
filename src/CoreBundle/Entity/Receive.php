@@ -28,6 +28,17 @@ class Receive
      */
     private $quantity;
 
+    /** 
+     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\Association", inversedBy="announcementReceive") 
+     * @ORM\JoinColumn(name="association_id", referencedColumnName="id", nullable=false) 
+     */
+    protected $association;
+
+    /** 
+     * @ORM\ManyToOne(targetEntity="Announcement", inversedBy="announcementReceive") 
+     * @ORM\JoinColumn(name="announcement_id", referencedColumnName="id", nullable=false) 
+     */
+    protected $announcement;
 
     /**
      * Get id
@@ -62,5 +73,52 @@ class Receive
     {
         return $this->quantity;
     }
-}
 
+    /**
+     * Set association
+     *
+     * @param \UserBundle\Entity\Association $association
+     *
+     * @return Receive
+     */
+    public function setAssociation(\UserBundle\Entity\Association $association)
+    {
+        $this->association = $association;
+
+        return $this;
+    }
+
+    /**
+     * Get association
+     *
+     * @return \UserBundle\Entity\Association
+     */
+    public function getAssociation()
+    {
+        return $this->association;
+    }
+
+    /**
+     * Set announcement
+     *
+     * @param \CoreBundle\Entity\Announcement $announcement
+     *
+     * @return Receive
+     */
+    public function setAnnouncement(\CoreBundle\Entity\Announcement $announcement)
+    {
+        $this->announcement = $announcement;
+
+        return $this;
+    }
+
+    /**
+     * Get announcement
+     *
+     * @return \CoreBundle\Entity\Announcement
+     */
+    public function getAnnouncement()
+    {
+        return $this->announcement;
+    }
+}

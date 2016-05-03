@@ -125,7 +125,18 @@ class Announcement
      * @ORM\Column(name="shipping", type="boolean")
      */
     private $shipping;
+    /**
+    * @var UserBunble\Entity\Association
+    *
+    * @ORM\ManyToOne(targetEntity="\UserBundle\Entity\Association")
+    * @ORM\JoinColumn(name="association_id", referencedColumnName="id")
+    */
+    private $association;
 
+    /**
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Receive", mappedBy="announcement", cascade={"persist"})
+     */
+    private $announcementReceive;
 
     /**
      * Get id
@@ -496,5 +507,69 @@ class Announcement
     {
         return $this->shipping;
     }
-}
 
+    /**
+     * Set association
+     *
+     * @param \UserBundle\Entity\Association $association
+     *
+     * @return Announcement
+     */
+    public function setAssociation(\UserBundle\Entity\Association $association = null)
+    {
+        $this->association = $association;
+
+        return $this;
+    }
+
+    /**
+     * Get association
+     *
+     * @return \UserBundle\Entity\Association
+     */
+    public function getAssociation()
+    {
+        return $this->association;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->announcementReceive = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add announcementReceive
+     *
+     * @param \CoreBundle\Entity\Receive $announcementReceive
+     *
+     * @return Announcement
+     */
+    public function addAnnouncementReceive(\CoreBundle\Entity\Receive $announcementReceive)
+    {
+        $this->announcementReceive[] = $announcementReceive;
+
+        return $this;
+    }
+
+    /**
+     * Remove announcementReceive
+     *
+     * @param \CoreBundle\Entity\Receive $announcementReceive
+     */
+    public function removeAnnouncementReceive(\CoreBundle\Entity\Receive $announcementReceive)
+    {
+        $this->announcementReceive->removeElement($announcementReceive);
+    }
+
+    /**
+     * Get announcementReceive
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAnnouncementReceive()
+    {
+        return $this->announcementReceive;
+    }
+}

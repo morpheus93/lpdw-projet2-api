@@ -64,8 +64,12 @@ class Association{
     * @ORM\ManyToOne(targetEntity="Account")
     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
     */
-    private $account;
+    protected $account;
 
+    /**
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Receive", mappedBy="association", cascade={"persist"})
+     */
+    private $announcementReceive;
 
     /**
      * Get id
@@ -291,5 +295,46 @@ class Association{
     public function getAccount()
     {
         return $this->account;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->announcementReceive = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add announcementReceive
+     *
+     * @param \CoreBundle\Entity\Receive $announcementReceive
+     *
+     * @return Association
+     */
+    public function addAnnouncementReceive(\CoreBundle\Entity\Receive $announcementReceive)
+    {
+        $this->announcementReceive[] = $announcementReceive;
+
+        return $this;
+    }
+
+    /**
+     * Remove announcementReceive
+     *
+     * @param \CoreBundle\Entity\Receive $announcementReceive
+     */
+    public function removeAnnouncementReceive(\CoreBundle\Entity\Receive $announcementReceive)
+    {
+        $this->announcementReceive->removeElement($announcementReceive);
+    }
+
+    /**
+     * Get announcementReceive
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAnnouncementReceive()
+    {
+        return $this->announcementReceive;
     }
 }

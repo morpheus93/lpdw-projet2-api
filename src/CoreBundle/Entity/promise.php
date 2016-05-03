@@ -7,10 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * promise
  *
- * @ORM\Table(name="promise")
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\promiseRepository")
+ * @ORM\Table(name="Promise")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\PromiseRepository")
  */
-class promise
+class Promise
 {
     /**
      * @var int
@@ -34,6 +34,18 @@ class promise
      * @ORM\Column(name="user_hidden", type="boolean")
      */
     private $userHidden;
+
+    /** 
+     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\Account", inversedBy="projectPromise") 
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false) 
+     */
+    protected $account;
+
+    /** 
+     * @ORM\ManyToOne(targetEntity="Project", inversedBy="projectPromise") 
+     * @ORM\JoinColumn(name="project_id", referencedColumnName="id", nullable=false) 
+     */
+    protected $project;
 
 
     /**
@@ -93,5 +105,52 @@ class promise
     {
         return $this->userHidden;
     }
-}
 
+    /**
+     * Set account
+     *
+     * @param \UserBundle\Entity\Account $account
+     *
+     * @return Promise
+     */
+    public function setAccount(\UserBundle\Entity\Account $account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * Get account
+     *
+     * @return \UserBundle\Entity\Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * Set project
+     *
+     * @param \CoreBundle\Entity\Project $project
+     *
+     * @return Promise
+     */
+    public function setProject(\CoreBundle\Entity\Project $project)
+    {
+        $this->project = $project;
+
+        return $this;
+    }
+
+    /**
+     * Get project
+     *
+     * @return \CoreBundle\Entity\Project
+     */
+    public function getProject()
+    {
+        return $this->project;
+    }
+}
