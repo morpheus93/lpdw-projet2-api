@@ -1,0 +1,27 @@
+<?php
+namespace CoreBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * User
+ *
+ * @ORM\Table(name="type_materials")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\TypeMaterialsRepository")
+ */
+class TypeMaterials{
+	
+	/**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @ORM\Column(name="code",type="string", length=50, nullable=true)
+     */
+    protected $label;
+}
