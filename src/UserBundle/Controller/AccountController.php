@@ -7,10 +7,13 @@ namespace UserBundle\Controller;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use UserBundle\Entity\Account;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
+use JMS\SecurityExtraBundle\Annotation\Secure;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
 
 /**
  * Class AccountController
@@ -24,13 +27,7 @@ use FOS\RestBundle\Controller\Annotations as FOSRest;
  */
 class AccountController extends Controller implements ClassResourceInterface
 {
-    /**
-     * @ApiDoc(
-     *  description="Create a new account",
-     *  input="Your\Namespace\Form\Type\YourType",
-     *  output="UserBundle/Entity/Account"
-     * )
-     */
+
 
     /**
      * Create account
@@ -39,8 +36,8 @@ class AccountController extends Controller implements ClassResourceInterface
      * @return JsonResponse Return 201 and empty array if account was created OR 400 and error message JSON if error
      *
      * @ApiDoc(
-     *  section="Emotions",
-     *  description="Get list of emotions",
+     *  section="Accounts",
+     *  description="Create new account",
      *  resource = true,
      *  statusCodes = {
      *     201 = "Returned when successful",
@@ -76,4 +73,70 @@ class AccountController extends Controller implements ClassResourceInterface
 
         return new JsonResponse(null, 201);
     }
+
+    /**
+     * Get current user account 's
+     * @return JsonResponse Return 200 and Account array if account was founded OR 404 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Accounts",
+     *  description="Get current user Account",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when account is not found"
+     *   }
+     * )
+     *
+     * @Secure(roles="ROLE_USER")
+     */
+    public function cgetMeAction(){
+        return $this->getUser();
+    }
+    /**
+     * Get an account
+     * @param Account $account
+     * @return JsonResponse Return 200 and Account array if account was founded OR 404 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Accounts",
+     *  description="Get an Account",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when account is not found"
+     *   }
+     * )
+     * @ParamConverter("account", class="UserBundle:Account")
+     *
+     * @Secure(roles="ROLE_USER")
+     */
+    public function getAction(Account $account)
+    {
+        return $account;
+    }
+
+    /**
+     * Get all accounts
+     * @return JsonResponse Return 200 and Account array if account was founded OR 404 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Accounts",
+     *  description="Get all Account",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when account is not found"
+     *   }
+     * )
+     *
+     * @Secure(roles="ROLE_USER")
+     */
+    public function cgetAction(){
+        $em = $this->getDoctrine()->getRepository("UserBundle:Account");
+        $accounts[] = $em->findAll();
+        return $accounts;
+    }
+
+
 }
