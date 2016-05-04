@@ -25,7 +25,7 @@ class Association{
     protected $code;
 
     /**
-     * @ORM\Column(name="name",type="string", length=25, nullable=true)
+     * @ORM\Column(name="name",type="string", length=25, nullable=false)
      */
     protected $name;
 
@@ -60,6 +60,11 @@ class Association{
      */
     protected $validation;
     
+    /**
+     * @ORM\Column(name="files",type="blob", nullable=true)
+     */
+    protected $files;
+
     /**
     * @ORM\ManyToOne(targetEntity="Account")
     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
@@ -336,5 +341,29 @@ class Association{
     public function getAnnouncementReceive()
     {
         return $this->announcementReceive;
+    }
+
+    /**
+     * Set files
+     *
+     * @param string $files
+     *
+     * @return Association
+     */
+    public function setFiles($files)
+    {
+        $this->files = $files;
+
+        return $this;
+    }
+
+    /**
+     * Get files
+     *
+     * @return string
+     */
+    public function getFiles()
+    {
+        return $this->files;
     }
 }

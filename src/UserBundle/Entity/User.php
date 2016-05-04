@@ -20,12 +20,12 @@ class User{
     protected $id;
 
     /**
-     * @ORM\Column(name="name",type="string", length=25, nullable=true)
+     * @ORM\Column(name="name",type="string", length=25, nullable=false)
      */
     protected $name;
 
     /**
-     * @ORM\Column(name="lastname",type="string", length=25, nullable=true)
+     * @ORM\Column(name="lastname",type="string", length=25, nullable=false)
      */
     protected $lastname;
 
@@ -36,7 +36,7 @@ class User{
     private $slug;
 
     /**
-     * @ORM\Column(name="description",type="string", length=25, nullable=true)
+     * @ORM\Column(name="birth_date",type="date", length=25, nullable=false)
      */
     protected $birth_date;
 
