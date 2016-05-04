@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Controller for account entity
+ */
 namespace UserBundle\Controller;
 
 use FOS\RestBundle\Request\ParamFetcherInterface;
@@ -10,6 +12,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use UserBundle\Entity\Account;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 
+/**
+ * Class AccountController
+ *
+ * Manage all action in relation with account entity
+ *
+ * @package     UserBundle\Controller
+ * @category    controllers
+ * @author      Elias Cédric Laouiti <elias@laouiti.me>
+ *
+ */
 class AccountController extends Controller implements ClassResourceInterface
 {
     /**
@@ -23,8 +35,8 @@ class AccountController extends Controller implements ClassResourceInterface
     /**
      * Create account
      *
-     * @param ParamFetcherInterface $paramFetcher
-     * @return JsonResponse
+     * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+     * @return JsonResponse Return 201 and empty array if account was created OR 400 and error message JSON if error
      *
      * @ApiDoc(
      *  section="Emotions",
@@ -40,10 +52,10 @@ class AccountController extends Controller implements ClassResourceInterface
      * @FOSRest\RequestParam(name="password_confirmation", nullable=false, description="Password confirmation")
      *
      */
-    // TODO : Validator
-    // TODO : Add email validation
-    public function postAction(ParamFetcherInterface $paramFetcher){
-
+    public function postAction(ParamFetcherInterface $paramFetcher)
+    {
+        // TODO : Validator
+        // TODO : Add email validation
         if ($paramFetcher->get('password') !== $paramFetcher->get('password_confirmation')) {
             $resp = array("message" => "Password and confirmation password doesn't match");
             return new JsonResponse($resp, 400);
