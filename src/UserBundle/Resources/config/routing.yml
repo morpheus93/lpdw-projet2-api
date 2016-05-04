@@ -1,0 +1,3 @@
+account:
+    type:     rest
+    resource: UserBundle\Controller\AccountController
