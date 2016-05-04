@@ -61,6 +61,14 @@ class Account extends BaseUser
     protected $projectPromise;
 
     /**
+     * Account constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
      * Get id
      *
      * @return int
@@ -247,4 +255,12 @@ class Account extends BaseUser
     {
         return $this->projectPromise;
     }
+
+    public function setEmail($email)
+    {
+        $this->setUsername($email);
+        return parent::setEmail($email);
+    }
+
+
 }
