@@ -12,7 +12,8 @@ class ProjectController extends Controller implements ClassResourceInterface
 {
     public function cgetAction()
     {
-    	$projects = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
-        return $projects;
+    	$projects[] = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
+
+    	return $projects;
     }
 }

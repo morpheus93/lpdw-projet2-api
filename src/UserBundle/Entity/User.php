@@ -1,10 +1,15 @@
 <?php
+/**
+ * Entity user
+ */
 namespace UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
+ * User
+ *
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\UserRepository")
  */

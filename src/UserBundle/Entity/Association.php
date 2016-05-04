@@ -1,10 +1,15 @@
 <?php
+/**
+ * Entity account
+ */
 namespace UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
+ * Association
+ *
  * @ORM\Table(name="association")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\AssociationRepository")
  */
