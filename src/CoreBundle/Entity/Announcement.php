@@ -94,9 +94,15 @@ class Announcement
     /**
      * @var string
      *
-     * @ORM\Column(name="state", type="string", length=15, columnDefinition="enum('waiting validation','refused', 'open', 'done')")
+     * @ORM\Column(name="state", type="string", length=8, columnDefinition="enum('waiting','refused', 'open', 'done')")
      */
     private $state;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=8, columnDefinition="enum('exchange', 'donate', 'collect')")
+     */
+    private $type;
 
     /**
      * @var int
@@ -572,4 +578,27 @@ class Announcement
     {
         return $this->announcementReceive;
     }
+
+    /**
+     * Get announcementType
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set announcementType
+     *
+     * @param string $type
+     * @return Announcement
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
 }
