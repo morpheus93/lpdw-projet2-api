@@ -1,16 +1,19 @@
 <?php
+/**
+ * Project entity
+ */
 
 namespace CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use UserBundle\Entity\Association;
 
 /**
- * Project
+ * Project Entity
  *
  * Project definition. A project is a request for funds from a Charity association
  *
- * @package     Colab API
- * @subpackage  CoreBundle
+ * @package     UserBundle\Controller
  * @category    classes
  * @author      Elias Cédric Laouiti <elias@laouiti.me>
  *
@@ -20,7 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Project
 {
     /**
-     * @var int
+     * @var int Project ID
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -29,42 +32,42 @@ class Project
     private $id;
 
     /**
-     * @var string
+     * @var string Project Name
      *
      * @ORM\Column(name="name", type="string", length=50)
      */
     private $name;
 
     /**
-     * @var string
+     * @var string Project description
      *
      * @ORM\Column(name="description", type="text")
      */
     private $description;
 
     /**
-     * @var bool
+     * @var bool Project Visibility
      *
      * @ORM\Column(name="visibility", type="boolean")
      */
     private $visibility;
 
     /**
-     * @var string
+     * @var string Project state
      *
      * @ORM\Column(name="state", type="string", length=15, columnDefinition="enum('waiting validation','refused', 'open', 'done')")
      */
     private $state;
 
     /**
-     * @var binary
+     * @var Binary Project banner image
      *
      * @ORM\Column(name="banner", type="binary")
      */
     private $banner;
 
     /**
-    * @var UserBunble\Entity\Association
+    * @var Association Association who has post the project
     *
     * @ORM\ManyToOne(targetEntity="\UserBundle\Entity\Association")
     * @ORM\JoinColumn(name="association_id", referencedColumnName="id")
@@ -72,6 +75,7 @@ class Project
     private $association;
 
     /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
      * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Promise", mappedBy="project", cascade={"persist"})
      */
     private $projectPromise;
