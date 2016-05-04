@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Controller for user entity
+ */
 namespace UserBundle\Controller;
 
 use FOS\RestBundle\Routing\ClassResourceInterface;
@@ -14,6 +16,16 @@ use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+/**
+ * Class UserController
+ *
+ * Manage all action in relation with association entity
+ *
+ * @package     UserBundle\Controller
+ * @category    controllers
+ * @author      Mavillaz Remi <remi.mavillaz@live.fr>
+ *
+ */
 class UserController extends Controller implements ClassResourceInterface
 {
     /**

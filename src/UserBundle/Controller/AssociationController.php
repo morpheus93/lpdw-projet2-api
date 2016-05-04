@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Controller for association entity
+ */
 namespace UserBundle\Controller;
 
 use FOS\RestBundle\Routing\ClassResourceInterface;
