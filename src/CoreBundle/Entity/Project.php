@@ -62,7 +62,7 @@ class Project
     /**
      * @var Binary Project banner image
      *
-     * @ORM\Column(name="banner", type="binary")
+     * @ORM\Column(name="banner", type="binary", nullable=true)
      */
     private $banner;
 

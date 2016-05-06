@@ -58,7 +58,8 @@ class AssociationController extends Controller implements ClassResourceInterface
      *
      */
     public function postAction(ParamFetcherInterface $paramFetcher){
-
+		$account = $this->getUser();
+		
     	$association = new Association();
         $association->setCode($paramFetcher->get('code'));
         $association->setName($paramFetcher->get('name'));
@@ -66,7 +67,8 @@ class AssociationController extends Controller implements ClassResourceInterface
         $association->setLeaderName($paramFetcher->get('leader_name'));
         $association->setLeaderPhone($paramFetcher->get('leader_phone'));
         $association->setLeaderEmail($paramFetcher->get('leader_email'));
-
+		$association->setAccount($account);
+		
         $em = $this->getDoctrine()->getManager();
         $em->persist($association);
         $em->flush();

@@ -56,11 +56,17 @@ class UserController extends Controller implements ClassResourceInterface
      *
      */
     public function postAction(ParamFetcherInterface $paramFetcher){
+		$account = $this->getUser();
+		
         $user = new User();
         $user->setName($paramFetcher->get('name'));
         $user->setLastname($paramFetcher->get('lastname'));
         $birthDate = new \DateTime($paramFetcher->get('birth_date'));
         $user->setBirthDate($birthDate);
+		$user->setAccount($account);
+		
+		
+		
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);
@@ -68,7 +74,4 @@ class UserController extends Controller implements ClassResourceInterface
 
         return new JsonResponse(null, 201);
     }
-
-
-
 }
