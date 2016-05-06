@@ -25,10 +25,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
  * @author      Elias Cédric Laouiti <elias@laouiti.me>
  *
  */
+
 class AccountController extends Controller implements ClassResourceInterface
 {
-
-
     /**
      * Create account
      *
@@ -47,7 +46,6 @@ class AccountController extends Controller implements ClassResourceInterface
      * @FOSRest\RequestParam(name="email", nullable=false, description="Account's email")
      * @FOSRest\RequestParam(name="password", nullable=false, description="Account's password")
      * @FOSRest\RequestParam(name="password_confirmation", nullable=false, description="Password confirmation")
-     *
      */
     public function postAction(ParamFetcherInterface $paramFetcher)
     {
@@ -88,11 +86,92 @@ class AccountController extends Controller implements ClassResourceInterface
      *   }
      * )
      *
-     * @Secure(roles="ROLE_USER")
+     * @Secure(roles="IS_AUTHENTICATED_FULLY")
      */
     public function cgetMeAction(){
         return $this->getUser();
     }
+
+	/**
+	 * Update an account's password
+	 *
+	 * @param ParamFetcherInterface $paramFetcherInterface Contain all body parameters received
+	 *
+	 * @return JsonResponse Return 201 and empty array if account was created OR 400 and error message JSON if error
+	 *
+	 * @ApiDoc(
+	 *  section="Accounts",
+	 *  description="Update an account",
+	 *  resource = true,
+	 *  statusCodes = {
+	 *     204 = "Returned when successful",
+	 *     400 = "Returned when password and confirmation doesn't match OR when email is already used"
+	 *   }
+	 * )
+	 * @FOSRest\Patch("/accounts/me/password")
+	 * @FOSRest\RequestParam(name="password", nullable=false, description="Account's password")
+	 * @FOSRest\RequestParam(name="password_confirmation", nullable=false, description="Password confirmation")
+	 * @Secure(roles="IS_AUTHENTICATED_FULLY")
+	 *
+	 */
+    public function patchPasswordAction(ParamFetcherInterface $paramFetcherInterface){
+        $account = $this->getUser();
+
+        if($paramFetcherInterface->get("password") != null){
+            if($paramFetcherInterface->get("password") == $paramFetcherInterface->get("password_confirmation")){
+                $account->setPlainPassword($paramFetcherInterface->get('password'));
+                // TODO : Length constrainte
+            } else {
+                $resp = array("message" => "Password and confirmation password doesn't match");
+                return new JsonResponse($resp, 400);
+            }
+        }
+
+        $userManager = $this->get("fos_user.user_manager");
+        $userManager->updateUser($account);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($account);
+        $em->flush();
+	    return new JsonResponse(null, 204);
+    }
+
+	/**
+	 * Update an account's email
+	 *
+	 * @param ParamFetcherInterface $paramFetcherInterface Contain all body parameters received
+	 *
+	 * @return JsonResponse Return 201 and empty array if account was created OR 400 and error message JSON if error
+	 *
+	 * @ApiDoc(
+	 *  section="Accounts",
+	 *  description="Update an account email",
+	 *  resource = true,
+	 *  statusCodes = {
+	 *     204 = "Returned when successful",
+	 *     400 = "Returned when email is already used"
+	 *   }
+	 * )
+	 * @FOSRest\Patch("/accounts/me/email")
+	 * @FOSRest\RequestParam(name="email", nullable=false, description="Account's email")
+	 * @Secure(roles="IS_AUTHENTICATED_FULLY")
+	 *
+	 */
+    public function patchEmailAction(ParamFetcherInterface $paramFetcherInterface){
+        $account = $this->getUser();
+
+	    if($paramFetcherInterface->get("email") != null){
+		    $account->setEmail($paramFetcherInterface->get('email'));
+		    // TODO : Unique constrainte
+	    }
+
+        $userManager = $this->get("fos_user.user_manager");
+        $userManager->updateUser($account);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($account);
+        $em->flush();
+	    return new JsonResponse(null, 204);
+    }
+
     /**
      * Get an account
      * @param Account $account
@@ -113,6 +192,7 @@ class AccountController extends Controller implements ClassResourceInterface
      */
     public function getAction(Account $account)
     {
+        // TODO : Limit view to ROLE_ADMIN
         return $account;
     }
 
@@ -133,10 +213,9 @@ class AccountController extends Controller implements ClassResourceInterface
      * @Secure(roles="ROLE_USER")
      */
     public function cgetAction(){
+        // TODO : Limit view to ROLE_ADMIN
         $em = $this->getDoctrine()->getRepository("UserBundle:Account");
         $accounts[] = $em->findAll();
         return $accounts;
     }
-
-
 }
