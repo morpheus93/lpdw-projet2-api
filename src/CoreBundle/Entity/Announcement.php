@@ -131,13 +131,14 @@ class Announcement
      * @ORM\Column(name="shipping", type="boolean")
      */
     private $shipping;
+
     /**
-    * @var UserBunble\Entity\Association
+    * @var \UserBundle\Entity\Account
     *
-    * @ORM\ManyToOne(targetEntity="\UserBundle\Entity\Association")
-    * @ORM\JoinColumn(name="association_id", referencedColumnName="id")
+    * @ORM\ManyToOne(targetEntity="\UserBundle\Entity\Account")
+    * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
     */
-    private $association;
+    private $accountID;
 
     /**
      * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Receive", mappedBy="announcement", cascade={"persist"})
@@ -514,29 +515,7 @@ class Announcement
         return $this->shipping;
     }
 
-    /**
-     * Set association
-     *
-     * @param \UserBundle\Entity\Association $association
-     *
-     * @return Announcement
-     */
-    public function setAssociation(\UserBundle\Entity\Association $association = null)
-    {
-        $this->association = $association;
 
-        return $this;
-    }
-
-    /**
-     * Get association
-     *
-     * @return \UserBundle\Entity\Association
-     */
-    public function getAssociation()
-    {
-        return $this->association;
-    }
     /**
      * Constructor
      */
@@ -601,4 +580,28 @@ class Announcement
         return $this;
     }
 
+
+    /**
+     * Set accountID
+     *
+     * @param \UserBundle\Entity\Account $accountID
+     *
+     * @return Announcement
+     */
+    public function setAccountID(\UserBundle\Entity\Account $accountID = null)
+    {
+        $this->accountID = $accountID;
+
+        return $this;
+    }
+
+    /**
+     * Get accountID
+     *
+     * @return \UserBundle\Entity\Account
+     */
+    public function getAccountID()
+    {
+        return $this->accountID;
+    }
 }

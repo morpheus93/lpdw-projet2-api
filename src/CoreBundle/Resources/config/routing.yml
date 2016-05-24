@@ -4,3 +4,6 @@ default:
 project:
     type:     rest
     resource: CoreBundle\Controller\ProjectController
+announcement:
+    type:     rest
+    resource: CoreBundle\Controller\AnnouncementController

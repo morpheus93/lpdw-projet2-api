@@ -13,7 +13,7 @@ use UserBundle\Entity\Association;
  *
  * Project definition. A project is a request for funds from a Charity association
  *
- * @package     UserBundle\Controller
+ * @package     CoreBundle\Controller
  * @category    classes
  * @author      Elias Cédric Laouiti <elias@laouiti.me>
  *
