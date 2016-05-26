@@ -522,6 +522,7 @@ class Announcement
     public function __construct()
     {
         $this->announcementReceive = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->visibility = 0;
     }
 
     /**

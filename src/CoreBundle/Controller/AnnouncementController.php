@@ -2,6 +2,7 @@
 
 	namespace CoreBundle\Controller;
 
+	use CoreBundle\Entity\Announcement;
 	use FOS\RestBundle\Request\ParamFetcherInterface;
 	use FOS\RestBundle\Routing\ClassResourceInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -57,8 +58,44 @@
 		 */
 		public function postAction(ParamFetcherInterface $paramFetcher)
 		{
-			// $resp = array("message" => "Password and confirmation password doesn't match");
-			// return new JsonResponse($resp, 400);
-			//return new JsonResponse(null, 201);
+			$announcement = new Announcement();
+			$announcement->setName($paramFetcher->get("name"));
+			$announcement->setDescription($paramFetcher->get("description"));
+			$announcement->setDateBegin(new \DateTime()); // TODO : Get Date from param fetcher
+			$announcement->setCity($paramFetcher->get("city"));
+			$announcement->setAddress($paramFetcher->get("address"));
+			$announcement->setContactName($paramFetcher->get("contactName"));
+			$announcement->setType($paramFetcher->get("type"));
+			$announcement->setShipping($paramFetcher->get("shipping"));
+
+			if(!is_null($dateFinish = $paramFetcher->get("dateEnd"))){
+				$announcement->setDateEnd($dateFinish);
+			}
+
+			if(!is_null($contactPhone = $paramFetcher->get("contactPhone"))){
+				$announcement->setContactPhone($contactPhone);
+			}
+
+			if(!is_null($contactEmail = $paramFetcher->get("contactEmail"))){
+				$announcement->setContactEmail($contactEmail);
+			}
+
+			if(!is_null($minCollect = $paramFetcher->get("minCollect"))){
+				$announcement->setMinCollect($minCollect);
+			}
+
+			if(!is_null($maxCollect = $paramFetcher->get("maxCollect"))){
+				$announcement->setMaxCollect($maxCollect);
+			}
+
+			if(!is_null($stock = $paramFetcher->get("stock"))){
+				$announcement->setStock($stock);
+			}
+
+			$em = $this->getDoctrine()->getManager();
+			$em->persist($announcement);
+			$em->flush();
+
+			return new JsonResponse(null, 201);
 		}
 	}
