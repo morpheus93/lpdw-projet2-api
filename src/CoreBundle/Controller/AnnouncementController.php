@@ -7,6 +7,7 @@
 	use FOS\RestBundle\Routing\ClassResourceInterface;
 	use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 	use Symfony\Component\HttpFoundation\JsonResponse;
+	use Symfony\Component\Validator\Constraints\DateTime;
 	use UserBundle\Entity\Account;
 	use FOS\RestBundle\Controller\Annotations as FOSRest;
 	use JMS\SecurityExtraBundle\Annotation\Secure;
@@ -43,8 +44,8 @@
 		 * )
 		 * @FOSRest\RequestParam(name="name", nullable=false, description="Announcement name")
 		 * @FOSRest\RequestParam(name="description", nullable=false, description="Announcement description")
-		 * @FOSRest\RequestParam(name="dateBegin", nullable=false, description="Announcement start date")
-		 * @FOSRest\RequestParam(name="dateEnd", nullable=true, description="Announcement stop date")
+		 * @FOSRest\RequestParam(name="dateBegin", nullable=false, description="[Timestamp] Announcement start date")
+		 * @FOSRest\RequestParam(name="dateEnd", nullable=true, description="[Timestamp] Announcement stop date")
 		 * @FOSRest\RequestParam(name="city", nullable=false, description="Announcement city ")
 		 * @FOSRest\RequestParam(name="address", nullable=false, description="Announcement address")
 		 * @FOSRest\RequestParam(name="contactName", nullable=false, description="Announcement contact name")
@@ -59,16 +60,21 @@
 		public function postAction(ParamFetcherInterface $paramFetcher)
 		{
 			$announcement = new Announcement();
+			$announcement->setAccountID($this->getUser());
 			$announcement->setName($paramFetcher->get("name"));
 			$announcement->setDescription($paramFetcher->get("description"));
-			$announcement->setDateBegin(new \DateTime()); // TODO : Get Date from param fetcher
+			$dateBegin = new \DateTime();
+			$dateBegin->setTimestamp($paramFetcher->get("dateBegin"));
+			$announcement->setDateBegin($dateBegin);
 			$announcement->setCity($paramFetcher->get("city"));
 			$announcement->setAddress($paramFetcher->get("address"));
 			$announcement->setContactName($paramFetcher->get("contactName"));
 			$announcement->setType($paramFetcher->get("type"));
 			$announcement->setShipping($paramFetcher->get("shipping"));
 
-			if(!is_null($dateFinish = $paramFetcher->get("dateEnd"))){
+			if(!is_null($timestampFinish = $paramFetcher->get("dateEnd"))){
+				$dateFinish = new \DateTime();
+				$dateFinish->setTimestamp($timestampFinish);
 				$announcement->setDateEnd($dateFinish);
 			}
 
@@ -96,6 +102,6 @@
 			$em->persist($announcement);
 			$em->flush();
 
-			return new JsonResponse(null, 201);
+			return new JsonResponse(new \DateTime(), 201);
 		}
 	}

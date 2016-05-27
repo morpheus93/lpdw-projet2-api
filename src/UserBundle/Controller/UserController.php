@@ -64,10 +64,7 @@ class UserController extends Controller implements ClassResourceInterface
         $birthDate = new \DateTime($paramFetcher->get('birth_date'));
         $user->setBirthDate($birthDate);
 		$user->setAccount($account);
-		
-		
-		
-
+        
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);
         $em->flush();
