@@ -1,5 +1,7 @@
 <?php
-
+	/**
+	 * Announcement Controller
+	 */
 	namespace CoreBundle\Controller;
 
 	use CoreBundle\Entity\Announcement;
@@ -60,7 +62,7 @@
 		public function postAction(ParamFetcherInterface $paramFetcher)
 		{
 			$announcement = new Announcement();
-			$announcement->setAccountID($this->getUser());
+			$announcement->setAccountId($this->getUser());
 			$announcement->setName($paramFetcher->get("name"));
 			$announcement->setDescription($paramFetcher->get("description"));
 			$dateBegin = new \DateTime();
@@ -103,5 +105,47 @@
 			$em->flush();
 
 			return new JsonResponse(new \DateTime(), 201);
+		}
+
+		/**
+		 * Get all announcements
+		 *
+		 * @return Announcement Empty Announcement array if no project founded
+		 *
+		 * @ApiDoc(
+		 *  section="Announcement",
+		 *  description="Get all announcement",
+		 *  resource = true,
+		 *  statusCodes = {
+		 *     200 = "Returned when successful",
+		 *   }
+		 * )
+		 **/
+		public function cgetAction(){
+			$annoncements = $this->getDoctrine()->getRepository('CoreBundle:Announcement')->findAll();
+			return $annoncements;
+		}
+
+		/**
+		 * Get an announcement
+		 * @param Announcement $announcement
+		 * @return JsonResponse Return 200 and Announcement array if announcement was founded OR 404 and error message JSON if error
+		 *
+		 * @ApiDoc(
+		 *  section="Announcement",
+		 *  description="Get an Announcement",
+		 *  resource = true,
+		 *  statusCodes = {
+		 *     200 = "Returned when successful",
+		 *     404 = "Returned when account is not found"
+		 *   }
+		 * )
+		 * @ParamConverter("announcement", class="CoreBundle:Announcement")
+		 *
+		 * @Secure(roles="ROLE_ASSO")
+		 */
+		public function getAction(Announcement $announcement){
+			$annoncements = $this->getDoctrine()->getRepository('CoreBundle:Announcement')->findById($announcement);
+			return $annoncements;
 		}
 	}

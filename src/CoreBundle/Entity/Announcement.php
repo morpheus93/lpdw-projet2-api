@@ -138,7 +138,7 @@ class Announcement
     * @ORM\ManyToOne(targetEntity="\UserBundle\Entity\Account")
     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
     */
-    private $accountID;
+    private $accountId;
 
     /**
      * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Receive", mappedBy="announcement", cascade={"persist"})
@@ -585,13 +585,13 @@ class Announcement
     /**
      * Set accountID
      *
-     * @param \UserBundle\Entity\Account $accountID
+     * @param \UserBundle\Entity\Account $accountId
      *
      * @return Announcement
      */
-    public function setAccountID(\UserBundle\Entity\Account $accountID = null)
+    public function setAccountId(\UserBundle\Entity\Account $accountId = null)
     {
-        $this->accountID = $accountID;
+        $this->accountId = $accountId;
 
         return $this;
     }
@@ -601,8 +601,8 @@ class Announcement
      *
      * @return \UserBundle\Entity\Account
      */
-    public function getAccountID()
+    public function getAccountId()
     {
-        return $this->accountID;
+        return $this->accountId;
     }
 }
