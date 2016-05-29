@@ -7,6 +7,3 @@ project:
 announcement:
     type:     rest
     resource: CoreBundle\Controller\AnnouncementController
-promise:
-    type:     rest
-    resource: CoreBundle\Controller\PromiseController

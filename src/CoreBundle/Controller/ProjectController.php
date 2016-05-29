@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use CoreBundle\Entity\Project;
+use CoreBundle\Entity\Promise;
 
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
@@ -89,5 +90,69 @@ class ProjectController extends Controller implements ClassResourceInterface
 
     	return $projects;
     }
-	
+    /**
+     * Create a promise
+     *
+     * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+     * @return JsonResponse Return 201 and empty array if account was linked OR 404 is project not exist
+     *
+     * @ApiDoc(
+     *  section="Promises",
+     *  description="Create promise",
+     *  resource = true,
+     *  statusCodes = {
+     *     201 = "Returned when successful",
+     *   }
+     * )
+     * @FOSRest\RequestParam(name="amount", nullable=false, requirements="\d+", description="Promise's amount")
+     * @FOSRest\RequestParam(name="userHidden", nullable=false, description="User hidden")
+     *
+     */
+    public function postPromiseAction(ParamFetcherInterface $paramFetcher, Project $project){
+        $account = $this->getUser();
+        $promise = new Promise();;
+
+        if (!$project) {
+            $resp = array("message" => "This project does not exist");
+            return new JsonResponse($resp, 400);
+        }
+
+        $paramFetcher->get('amount');
+        $promise->setAccount($account);
+        $promise->setProject($project);
+        $promise->setAmount($paramFetcher->get('amount'));
+
+        if($paramFetcher->get('userHidden') == true ){
+            $promise->setUserHidden(true);
+        } else{
+            $promise->setUserHidden(false);
+        }
+        
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($promise);
+        $em->flush();
+        return new JsonResponse(null, 201);
+    }
+    
+    /**
+     * Get all promises
+     *
+     * @return Promise Empty Promise array if no project founded
+     *
+     * @ApiDoc(
+     *  section="Announcement",
+     *  description="Get all promises for a project",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *   }
+     * )
+     **/
+    public function getPromiseAction(Project $project){
+
+        $promises = $this->getDoctrine()->getRepository('CoreBundle:Promise')->findAll();
+
+        return $promises;
+    }
 }
