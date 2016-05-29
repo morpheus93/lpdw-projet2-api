@@ -21,6 +21,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  * @package     CoreBundle\Controller
  * @category    controllers
  * @author      Mavillaz Remi <remi.mavillaz@live.fr>
+ * @author      Laouiti Elias <elias@laouiti.me>
  *
  */
 class ProjectController extends Controller implements ClassResourceInterface
@@ -67,6 +68,21 @@ class ProjectController extends Controller implements ClassResourceInterface
 
         return new JsonResponse(null, 201);
     }
+
+	/**
+	* Get all projects
+	*
+	* @return Project[] Empty Project array if no project founded
+	*
+	* @ApiDoc(
+	*  section="Projects",
+	*  description="Get all projects",
+	*  resource = true,
+	*  statusCodes = {
+	*     200 = "Returned when successful",
+	*   }
+	* )
+	**/
     public function cgetAction()
     {
     	$projects[] = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
