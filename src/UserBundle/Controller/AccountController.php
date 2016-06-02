@@ -215,7 +215,7 @@ class AccountController extends Controller implements ClassResourceInterface
     public function cgetAction(){
         // TODO : Limit view to ROLE_ADMIN
         $em = $this->getDoctrine()->getRepository("UserBundle:Account");
-        $accounts[] = $em->findAll();
+        $accounts = $em->findAll();
         return $accounts;
     }
 }

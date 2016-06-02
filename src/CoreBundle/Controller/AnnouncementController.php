@@ -7,6 +7,7 @@
 	use CoreBundle\Entity\Announcement;
 	use FOS\RestBundle\Request\ParamFetcherInterface;
 	use FOS\RestBundle\Routing\ClassResourceInterface;
+	use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 	use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 	use Symfony\Component\HttpFoundation\JsonResponse;
 	use Symfony\Component\Validator\Constraints\DateTime;
@@ -104,7 +105,7 @@
 			$em->persist($announcement);
 			$em->flush();
 
-			return new JsonResponse(new \DateTime(), 201);
+			return new JsonResponse(null, 201);
 		}
 
 		/**
@@ -118,8 +119,10 @@
 		 *  resource = true,
 		 *  statusCodes = {
 		 *     200 = "Returned when successful",
+		 *     403 = "If User is not allowed to see that",
 		 *   }
 		 * )
+		 * @Security("has_role('ROLE_ASSO')")
 		 **/
 		public function cgetAction(){
 			$annoncements = $this->getDoctrine()->getRepository('CoreBundle:Announcement')->findAll();
@@ -137,15 +140,15 @@
 		 *  resource = true,
 		 *  statusCodes = {
 		 *     200 = "Returned when successful",
+		 *     403 = "If User is not allowed to see that",
 		 *     404 = "Returned when account is not found"
 		 *   }
 		 * )
 		 * @ParamConverter("announcement", class="CoreBundle:Announcement")
 		 *
-		 * @Secure(roles="ROLE_ASSO")
+		 * @Security("has_role('ROLE_ASSO')")
 		 */
 		public function getAction(Announcement $announcement){
-			$annoncements = $this->getDoctrine()->getRepository('CoreBundle:Announcement')->findById($announcement);
-			return $annoncements;
+			return $announcement;
 		}
 	}

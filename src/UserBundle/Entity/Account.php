@@ -11,9 +11,14 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  * @ORM\Table(name="account")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\AccountRepository")
  */
-// TODO : nullable=false et verifier champ validation
+// TODO : nullable = false et verifier champ validation
 class Account extends BaseUser
-{
+
+{	const ROLE_SUPER_ADMIN = "ROLE_ADMIN";
+	const ROLE_DEFAULT = "ROLE_DEFAULT";
+	const ROLE_USER = "ROLE_USER";
+	const ROLE_ASSO = "ROLE_ASSO";
+
     use TimestampableEntity;
     /**
      * @var int
@@ -66,6 +71,7 @@ class Account extends BaseUser
     public function __construct()
     {
         parent::__construct();
+        $this->addRole(static::ROLE_DEFAULT);
     }
 
     /**
