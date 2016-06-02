@@ -145,7 +145,6 @@
 		 * @Secure(roles="ROLE_ASSO")
 		 */
 		public function getAction(Announcement $announcement){
-			$annoncements = $this->getDoctrine()->getRepository('CoreBundle:Announcement')->findById($announcement);
-			return $annoncements;
+			return $annoncement;
 		}
 	}
