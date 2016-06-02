@@ -60,9 +60,9 @@ class Project
     private $state;
 
     /**
-     * @var Binary Project banner image
+     * @var Text Project banner image
      *
-     * @ORM\Column(name="banner", type="binary", nullable=true)
+     * @ORM\Column(name="banner", type="text", nullable=true)
      */
     private $banner;
 

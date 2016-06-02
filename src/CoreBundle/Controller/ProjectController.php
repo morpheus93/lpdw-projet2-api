@@ -86,8 +86,7 @@ class ProjectController extends Controller implements ClassResourceInterface
 	**/
     public function cgetAction()
     {
-    	$projects[] = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
-
+    	$projects = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
     	return $projects;
     }
     /**
@@ -97,7 +96,7 @@ class ProjectController extends Controller implements ClassResourceInterface
      * @return JsonResponse Return 201 and empty array if account was linked OR 404 is project not exist
      *
      * @ApiDoc(
-     *  section="Promises",
+     *  section="Projects",
      *  description="Create promise",
      *  resource = true,
      *  statusCodes = {
@@ -141,7 +140,7 @@ class ProjectController extends Controller implements ClassResourceInterface
      * @return Promise Empty Promise array if no project founded
      *
      * @ApiDoc(
-     *  section="Announcement",
+     *  section="Projects",
      *  description="Get all promises for a project",
      *  resource = true,
      *  statusCodes = {
@@ -151,7 +150,7 @@ class ProjectController extends Controller implements ClassResourceInterface
      **/
     public function getPromiseAction(Project $project){
 
-        $promises = $this->getDoctrine()->getRepository('CoreBundle:Promise')->findAll();
+        $promises = $this->getDoctrine()->getRepository('CoreBundle:Promise')->findBy(["project" => $project]);
 
         return $promises;
     }
