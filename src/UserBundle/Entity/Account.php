@@ -55,11 +55,7 @@ class Account extends BaseUser
      */
     protected $img;
 
-    /**
-     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Promise", mappedBy="account", cascade={"persist"})
-     */
-    protected $projectPromise;
-
+    
     /**
      * Account constructor.
      */
@@ -220,40 +216,6 @@ class Account extends BaseUser
     public function getImg()
     {
         return $this->img;
-    }
-
-    /**
-     * Add projectPromise
-     *
-     * @param \CoreBundle\Entity\Promise $projectPromise
-     *
-     * @return Account
-     */
-    public function addProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
-    {
-        $this->projectPromise[] = $projectPromise;
-
-        return $this;
-    }
-
-    /**
-     * Remove projectPromise
-     *
-     * @param \CoreBundle\Entity\Promise $projectPromise
-     */
-    public function removeProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
-    {
-        $this->projectPromise->removeElement($projectPromise);
-    }
-
-    /**
-     * Get projectPromise
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getProjectPromise()
-    {
-        return $this->projectPromise;
     }
 
     public function setEmail($email)

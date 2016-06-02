@@ -11,10 +11,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use CoreBundle\Entity\Project;
 use CoreBundle\Entity\Promise;
 use CoreBundle\Entity\Association;
-
+use JMS\SecurityExtraBundle\Annotation\Secure;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
 /**
  * Class ProjectController
  *
@@ -123,6 +125,29 @@ class ProjectController extends Controller implements ClassResourceInterface
     	$projects = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
     	return $projects;
     }
+
+    /**
+     * Get a project
+     * @param Project $project
+     * @return JsonResponse Return 200 and project array if project was founded OR 404 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Projects",
+     *  description="Get a project",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when account is not found"
+     *   }
+     * )
+     * @ParamConverter("project", class="CoreBundle:Project")
+     *
+     * @Secure(roles="ROLE_USER")
+     */
+    public function getAction(Project $project){
+        return $project;
+    }
+
     /**
      * Create a promise
      *
@@ -167,25 +192,22 @@ class ProjectController extends Controller implements ClassResourceInterface
         $em->flush();
         return new JsonResponse(null, 201);
     }
-    
+
     /**
-     * Get all promises
+     * Get a promise
      *
      * @return Promise Empty Promise array if no project founded
      *
      * @ApiDoc(
      *  section="Projects",
-     *  description="Get all promises for a project",
+     *  description="Get a promise for a project",
      *  resource = true,
      *  statusCodes = {
      *     200 = "Returned when successful",
      *   }
      * )
      **/
-    public function getPromiseAction(Project $project){
-
-        $promises = $this->getDoctrine()->getRepository('CoreBundle:Promise')->findBy(["project" => $project]);
-
-        return $promises;
+    public function getPromiseAction(Project $project, Promise $promise){
+        return $promise;
     }
 }
