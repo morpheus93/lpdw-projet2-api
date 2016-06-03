@@ -15,7 +15,6 @@
 	use JMS\SecurityExtraBundle\Annotation\Secure;
 	use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 	use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
 	/**
 	 * Class AnnouncementController
 	 *
@@ -51,12 +50,12 @@
 		 * @FOSRest\RequestParam(name="city", nullable=false, description="Announcement city ")
 		 * @FOSRest\RequestParam(name="address", nullable=false, description="Announcement address")
 		 * @FOSRest\RequestParam(name="contactName", nullable=false, description="Announcement contact name")
-		 * @FOSRest\RequestParam(name="contactEmail", nullable=true, description="Announcement contact email")
+		 * @FOSRest\RequestParam(name="contactEmail", nullable=true, requirements=@CoreBundle\Validator\Constraints\Email, description="Announcement contact email")
 		 * @FOSRest\RequestParam(name="contactPhone", nullable=true, description="Announcement contact phone")
 		 * @FOSRest\RequestParam(name="type", nullable=false, description="Announcement type : 'exchange', 'donate', 'collect'")
 		 * @FOSRest\RequestParam(name="stock", nullable=true, description="Announcement quantity")
-		 * @FOSRest\RequestParam(name="minCollect", nullable=true, description="Announcement minimum collect")
-		 * @FOSRest\RequestParam(name="maxCollect", nullable=true, description="Announcement maximum collect")
+		 * @FOSRest\RequestParam(name="minCollect", nullable=true, requirements=@CoreBundle\Validator\Constraints\Number, description="Announcement minimum collect")
+		 * @FOSRest\RequestParam(name="maxCollect", nullable=true, requirements=@CoreBundle\Validator\Constraints\Number, description="Announcement maximum collect")
 		 * @FOSRest\RequestParam(name="shipping", nullable=false, requirements=@CoreBundle\Validator\Constraints\Boolean, description="Object can be shipped ?")
 		 */
 		public function postAction(ParamFetcherInterface $paramFetcher)
@@ -66,6 +65,7 @@
 			$announcement->setName($paramFetcher->get("name"));
 			$announcement->setDescription($paramFetcher->get("description"));
 			$dateBegin = new \DateTime();
+			// TODO : check use timestamp
 			$dateBegin->setTimestamp($paramFetcher->get("dateBegin"));
 			$announcement->setDateBegin($dateBegin);
 			$announcement->setCity($paramFetcher->get("city"));
