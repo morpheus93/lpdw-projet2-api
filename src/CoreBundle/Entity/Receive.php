@@ -5,7 +5,14 @@ namespace CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Receive
+ * Receive Entity
+ *
+ * Receive definition. Transaction details between association and an announcement.
+ *
+ * @package     CoreBundle\Controller
+ * @category    classes
+ * @author      Mavillaz Remi <remi.mavillaz@live.fr>
+ * @author      Laouiti Elias <elias@laouiti.me>
  *
  * @ORM\Table(name="receive")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\ReceiveRepository")

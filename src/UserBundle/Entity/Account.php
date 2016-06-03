@@ -6,7 +6,14 @@ use FOS\UserBundle\Model\User as BaseUser;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
- * User
+ * Account Entity
+ *
+ * Account definition. Account details for an user or association.
+ *
+ * @package     CoreBundle\Controller
+ * @category    classes
+ * @author      Mavillaz Remi <remi.mavillaz@live.fr>
+ * @author      Laouiti Elias <elias@laouiti.me>
  *
  * @ORM\Table(name="account")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\AccountRepository")

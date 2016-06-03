@@ -5,7 +5,14 @@ namespace CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * promise
+ * Promise Entity
+ *
+ * Promise definition. A promise is a donation from an account for a project
+ *
+ * @package     CoreBundle\Controller
+ * @category    classes
+ * @author      Mavillaz Remi <remi.mavillaz@live.fr>
+ * @author      Laouiti Elias <elias@laouiti.me>
  *
  * @ORM\Table(name="Promise")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\PromiseRepository")

@@ -5,7 +5,14 @@ namespace CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Announcement
+ * Announcement Entity
+ *
+ * Announcement definition. An announce allows a transaction between Charity association
+ *
+ * @package     CoreBundle\Controller
+ * @category    classes
+ * @author      Mavillaz Remi <remi.mavillaz@live.fr>
+ * @author      Laouiti Elias <elias@laouiti.me>
  *
  * @ORM\Table(name="announcement")
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\AnnouncementRepository")
@@ -144,6 +151,16 @@ class Announcement
      * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Receive", mappedBy="announcement", cascade={"persist"})
      */
     private $announcementReceive;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->announcementReceive = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->visibility = 0;
+        $this->state = 1;
+    }
 
     /**
      * Get id
@@ -513,16 +530,6 @@ class Announcement
     public function getShipping()
     {
         return $this->shipping;
-    }
-
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->announcementReceive = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->visibility = 0;
     }
 
     /**
