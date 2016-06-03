@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * Class Number
  * @package CoreBundle\Validator\Constraints
+ * @Annotation
  */
 class Number extends Constraint
 {

@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * Class Password
  * @package CoreBundle\Validator\Constraints
+ * @Annotation
  */
 class Password extends Constraint
 {

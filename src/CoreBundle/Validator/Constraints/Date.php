@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * Class Date
  * @package CoreBundle\Validator\Constraints
+ * @Annotation
  */
 class Date extends Constraint
 {

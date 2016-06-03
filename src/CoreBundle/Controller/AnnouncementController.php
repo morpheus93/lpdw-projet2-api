@@ -57,7 +57,7 @@
 		 * @FOSRest\RequestParam(name="stock", nullable=true, description="Announcement quantity")
 		 * @FOSRest\RequestParam(name="minCollect", nullable=true, description="Announcement minimum collect")
 		 * @FOSRest\RequestParam(name="maxCollect", nullable=true, description="Announcement maximum collect")
-		 * @FOSRest\RequestParam(name="shipping", nullable=false, description="Object can be shipped ?")
+		 * @FOSRest\RequestParam(name="shipping", nullable=false, requirements=@CoreBundle\Validator\Constraints\Boolean, description="Object can be shipped ?")
 		 */
 		public function postAction(ParamFetcherInterface $paramFetcher)
 		{

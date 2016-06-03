@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * Class Boolean
  * @package CoreBundle\Validator\Constraints
+ * @Annotation
  */
 class Boolean extends Constraint
 {
