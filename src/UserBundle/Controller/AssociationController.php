@@ -23,6 +23,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  */
 class AssociationController extends Controller implements ClassResourceInterface
 {
+    const ROLE_ASSO = "ROLE_ASSO";
     /**
      * @ApiDoc(
      *  description="Link account with an association",
@@ -64,7 +65,8 @@ class AssociationController extends Controller implements ClassResourceInterface
         $association->setLeaderPhone($paramFetcher->get('leader_phone'));
         $association->setLeaderEmail($paramFetcher->get('leader_email'));
 		$association->setAccount($account);
-		
+		$account->setRoles(array(static::ROLE_ASSO));
+
         $em = $this->getDoctrine()->getManager();
         $em->persist($association);
         $em->flush();
