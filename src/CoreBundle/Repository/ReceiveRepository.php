@@ -10,4 +10,15 @@ namespace CoreBundle\Repository;
  */
 class ReceiveRepository extends \Doctrine\ORM\EntityRepository
 {
+	public function getById($asso_id,$announce_id)
+	{
+		$query = $this->createQueryBuilder('a')
+			->setParameter('asso_id', $asso_id)
+			->setParameter('announce_id', $announce_id)
+			->where('a.association = :asso_id')
+			->AndWhere('a.announcement = :announce_id')
+			->getQuery();
+
+		return $query->getResult();
+	}
 }

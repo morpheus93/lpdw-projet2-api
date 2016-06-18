@@ -17,7 +17,7 @@ namespace CoreBundle\Controller;
 	use JMS\SecurityExtraBundle\Annotation\Secure;
 	use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 	use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
+	use CoreBundle\Entity\Receive;
 	/**
 	 * Class AnnouncementController
 	 *
@@ -227,4 +227,66 @@ namespace CoreBundle\Controller;
 	public function getAction(Announcement $announcement){
 		return $announcement;
 	}
+
+	/**
+	 * Create a receive
+	 *
+	 * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+	 * @param Announcement              $Announce
+	 *
+	 * @return JsonResponse Return 201 and empty array if account was linked OR 404 is project not exist
+	 *
+	 * @ApiDoc(
+	 *  section="Announcement",
+	 *  description="Create receive",
+	 *  resource = true,
+	 *  statusCodes = {
+	 *     201 = "Returned when successful",
+	 *   }
+	 * )
+	 *
+	 * @FOSRest\RequestParam(name="quantity", nullable=false, requirements="\d+", description="Receive's quantity")
+	 */
+    public function postReceiveAction(ParamFetcherInterface $paramFetcher, Announcement $announce){
+        $account = $this->getUser();
+
+
+        $receive = new Receive();
+
+        // TODO : Enlever le parametre amount
+        if (!$announce) {
+            $resp = array("message" => "This announcement does not exist");
+            return new JsonResponse($resp, 400);
+        }
+		$em = $this->getDoctrine()->getRepository("UserBundle:Association");
+
+        $asso = $em->findOneByAccount($account);
+
+        $em = $this->getDoctrine()->getRepository("CoreBundle:Receive");
+        if($em->getById($asso, $announce)){
+            $resp = array("message" => "Vous avez déjà fait une demande pour cette annonce");
+            return new JsonResponse($resp, 400);
+        }
+
+        $quantity = $paramFetcher->get('quantity');
+        $receive->setAssociation($asso);
+        $receive->setAnnouncement($announce);
+        $receive->setQuantity($quantity);
+
+        if($announce->getMinCollect() > $quantity){
+        	$resp = array("message" => "Vous ne pouvez prendre une quantité minimum de ".$announce->getMinCollect()." pour cette annonce");
+        	return new JsonResponse($resp, 400);
+        }
+
+        if($announce->getMaxCollect() < $quantity){
+        	$resp = array("message" => "Vous ne pouvez prendre une quantité maximum de ".$announce->getMaxCollect()." pour cette annonce");
+        	return new JsonResponse($resp, 400);
+        }
+        
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($receive);
+        $em->flush();
+
+        return new JsonResponse(null, 201);
+    }
 }

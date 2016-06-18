@@ -25,6 +25,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
  */
 class UserController extends Controller implements ClassResourceInterface
 {
+    const ROLE_USER = "ROLE_USER";
     /**
      * @ApiDoc(
      *  description="Link account with an user",
@@ -61,7 +62,7 @@ class UserController extends Controller implements ClassResourceInterface
         $birthDate = new \DateTime($paramFetcher->get('birth_date'));
         $user->setBirthDate($birthDate);
 		$user->setAccount($account);
-        
+        $account->setRoles(array(static::ROLE_USER));
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);
         $em->flush();
