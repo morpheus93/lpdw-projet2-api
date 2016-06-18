@@ -6,15 +6,11 @@ namespace UserBundle\Controller;
 
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use UserBundle\Entity\Association;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use UserBundle\Form\Type\AssociationType;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 /**
  * Class AssociationController
  *
@@ -74,5 +70,43 @@ class AssociationController extends Controller implements ClassResourceInterface
         $em->flush();
 
         return new JsonResponse(null, 201);
+    }
+
+    /**
+     * Link account with association
+     *
+     * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+     * @return JsonResponse Return 204 and empty array if account was linked OR 400 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Associations",
+     *  description="Update Association",
+     *  resource = true,
+     *  statusCodes = {
+     *     204 = "Returned when successful",
+     *   }
+     * )
+     * @FOSRest\RequestParam(name="description", nullable=false, description="Association's description")
+     * @FOSRest\RequestParam(name="leader_name", nullable=false, description="Association's leader name")
+     * @FOSRest\RequestParam(name="leader_phone", nullable=false, description="Association's leader phone")
+     * @FOSRest\RequestParam(name="leader_email", nullable=false, requirements=@CoreBundle\Validator\Constraints\Email, description="Association's leader email")
+     *
+     */
+    public function patchAction(ParamFetcherInterface $paramFetcher){
+        $account = $this->getUser();
+
+        $em = $this->getDoctrine()->getRepository("UserBundle:Association");
+        $association = $em->findOneByAccount($account);
+
+        $association->setDescription($paramFetcher->get('description'));
+        $association->setLeaderName($paramFetcher->get('leader_name'));
+        $association->setLeaderPhone($paramFetcher->get('leader_phone'));
+        $association->setLeaderEmail($paramFetcher->get('leader_email'));
+        
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($association);
+        $em->flush();
+
+        return new JsonResponse(null, 204);
     }
 }

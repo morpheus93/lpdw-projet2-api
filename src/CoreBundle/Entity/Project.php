@@ -46,6 +46,13 @@ class Project
     private $description;
 
     /**
+     * @var date Project publication
+     *
+     * @ORM\Column(name="date_publication",type="date", length=25, nullable=false)
+     */
+    private $date_publication;
+
+    /**
      * @var bool Project Visibility
      *
      * @ORM\Column(name="visibility", type="boolean")
@@ -60,9 +67,9 @@ class Project
     private $state;
 
     /**
-     * @var Binary Project banner image
+     * @var Text Project banner image
      *
-     * @ORM\Column(name="banner", type="binary", nullable=true)
+     * @ORM\Column(name="banner", type="text", nullable=true)
      */
     private $banner;
 
@@ -273,5 +280,29 @@ class Project
     public function getProjectPromise()
     {
         return $this->projectPromise;
+    }
+
+    /**
+     * Set datePublication
+     *
+     * @param \DateTime $datePublication
+     *
+     * @return Project
+     */
+    public function setDatePublication($datePublication)
+    {
+        $this->date_publication = $datePublication;
+
+        return $this;
+    }
+
+    /**
+     * Get datePublication
+     *
+     * @return \DateTime
+     */
+    public function getDatePublication()
+    {
+        return $this->date_publication;
     }
 }

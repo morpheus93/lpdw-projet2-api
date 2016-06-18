@@ -43,7 +43,7 @@ class AccountController extends Controller implements ClassResourceInterface
      *     400 = "Returned when password and confirmation doesn't match"
      *   }
      * )
-     * @FOSRest\RequestParam(name="email", nullable=false, description="Account's email")
+     * @FOSRest\RequestParam(name="email", nullable=false, requirements=@CoreBundle\Validator\Constraints\Email, description="Account's email")
      * @FOSRest\RequestParam(name="password", nullable=false, description="Account's password")
      * @FOSRest\RequestParam(name="password_confirmation", nullable=false, description="Password confirmation")
      */
@@ -70,26 +70,6 @@ class AccountController extends Controller implements ClassResourceInterface
         $em->flush();
 
         return new JsonResponse(null, 201);
-    }
-
-    /**
-     * Get current user account 's
-     * @return JsonResponse Return 200 and Account array if account was founded OR 404 and error message JSON if error
-     *
-     * @ApiDoc(
-     *  section="Accounts",
-     *  description="Get current user Account",
-     *  resource = true,
-     *  statusCodes = {
-     *     200 = "Returned when successful",
-     *     404 = "Returned when account is not found"
-     *   }
-     * )
-     *
-     * @Secure(roles="IS_AUTHENTICATED_FULLY")
-     */
-    public function cgetMeAction(){
-        return $this->getUser();
     }
 
 	/**
@@ -173,6 +153,60 @@ class AccountController extends Controller implements ClassResourceInterface
     }
 
     /**
+     * Get all accounts
+     * @return JsonResponse Return 200 and Account array if account was founded OR 404 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Accounts",
+     *  description="Get all Account",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when account is not found"
+     *   }
+     * )
+     *
+     * @Secure(roles="ROLE_USER")
+     */
+    public function cgetAction(){
+        // TODO : Limit view to ROLE_ADMIN
+        $em = $this->getDoctrine()->getRepository("UserBundle:Account");
+        $accounts[] = $em->findAll();
+        return $accounts;
+    }
+
+    /**
+    * Get account info
+    *
+    * @param Account $account
+    * @return Array
+    */
+    private function getAccountInfos(Account $account){
+
+        // TODO : Get assos ou user info
+    }
+
+   /**
+     * Get current user account 's
+     * @return JsonResponse Return 200 and Account array if account was founded OR 404 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Accounts",
+     *  description="Get current user Account",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when account is not found"
+     *   }
+     * )
+     *
+     * @Secure(roles="IS_AUTHENTICATED_FULLY")
+     */
+    public function getMeAction(){
+        return $this->getAccountInfos($this->getUser());
+    }
+    
+    /**
      * Get an account
      * @param Account $account
      * @return JsonResponse Return 200 and Account array if account was founded OR 404 and error message JSON if error
@@ -193,29 +227,7 @@ class AccountController extends Controller implements ClassResourceInterface
     public function getAction(Account $account)
     {
         // TODO : Limit view to ROLE_ADMIN
-        return $account;
+	    return $this->getAccountInfos($account);
     }
 
-    /**
-     * Get all accounts
-     * @return JsonResponse Return 200 and Account array if account was founded OR 404 and error message JSON if error
-     *
-     * @ApiDoc(
-     *  section="Accounts",
-     *  description="Get all Account",
-     *  resource = true,
-     *  statusCodes = {
-     *     200 = "Returned when successful",
-     *     404 = "Returned when account is not found"
-     *   }
-     * )
-     *
-     * @Secure(roles="ROLE_USER")
-     */
-    public function cgetAction(){
-        // TODO : Limit view to ROLE_ADMIN
-        $em = $this->getDoctrine()->getRepository("UserBundle:Account");
-        $accounts = $em->findAll();
-        return $accounts;
-    }
 }

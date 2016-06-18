@@ -4,12 +4,23 @@ namespace UserBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
 /**
- * User
+ * Account Entity
+ *
+ * Account definition. Account details for an user or association.
+ *
+ * @package     CoreBundle\Controller
+ * @category    classes
+ * @author      Mavillaz Remi <remi.mavillaz@live.fr>
+ * @author      Laouiti Elias <elias@laouiti.me>
  *
  * @ORM\Table(name="account")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\AccountRepository")
+ * @ExclusionPolicy("all")
  */
 // TODO : nullable = false et verifier champ validation
 class Account extends BaseUser
@@ -31,16 +42,19 @@ class Account extends BaseUser
 
     /**
      * @ORM\Column(name="address", type="string", length=60, nullable=true)
+     * @expose
      */
     protected $address;
 
     /**
      * @ORM\Column(name="firstname",type="string", length=25, nullable=true)
+     * @expose
      */
     protected $city;
 
     /**
      * @ORM\Column(name="lastname",type="string", length=25, nullable=true)
+     * @expose
      */
     protected $country;
 
@@ -64,7 +78,40 @@ class Account extends BaseUser
      * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Promise", mappedBy="account", cascade={"persist"})
      */
     protected $projectPromise;
+    
+    /**
+     * Add projectPromise
+     *
+     * @param \CoreBundle\Entity\Promise $projectPromise
+     *
+     * @return Account
+     */
+    public function addProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
+    {
+        $this->projectPromise[] = $projectPromise;
 
+        return $this;
+    }
+
+    /**
+     * Remove projectPromise
+     *
+     * @param \CoreBundle\Entity\Promise $projectPromise
+     */
+    public function removeProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
+    {
+       $this->projectPromise->removeElement($projectPromise);
+    }
+
+    /**
+     * Get projectPromise
+     *
+    * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProjectPromise()
+    {
+        return $this->projectPromise;
+    }
     /**
      * Account constructor.
      */
@@ -226,40 +273,6 @@ class Account extends BaseUser
     public function getImg()
     {
         return $this->img;
-    }
-
-    /**
-     * Add projectPromise
-     *
-     * @param \CoreBundle\Entity\Promise $projectPromise
-     *
-     * @return Account
-     */
-    public function addProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
-    {
-        $this->projectPromise[] = $projectPromise;
-
-        return $this;
-    }
-
-    /**
-     * Remove projectPromise
-     *
-     * @param \CoreBundle\Entity\Promise $projectPromise
-     */
-    public function removeProjectPromise(\CoreBundle\Entity\Promise $projectPromise)
-    {
-        $this->projectPromise->removeElement($projectPromise);
-    }
-
-    /**
-     * Get projectPromise
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getProjectPromise()
-    {
-        return $this->projectPromise;
     }
 
     public function setEmail($email)
