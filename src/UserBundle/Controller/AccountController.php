@@ -60,8 +60,7 @@ class AccountController extends Controller implements ClassResourceInterface
         $account->setEmail($paramFetcher->get('email'));
         $account->setPlainPassword($paramFetcher->get('password'));
         $account->setEnabled(true);
-
-
+	    
         $userManager = $this->get("fos_user.user_manager");
         $userManager->updateUser($account);
 

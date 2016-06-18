@@ -118,7 +118,7 @@ class Account extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->addRole(static::ROLE_DEFAULT);
+        $this->roles = array(static::ROLE_DEFAULT);
     }
 
     /**
