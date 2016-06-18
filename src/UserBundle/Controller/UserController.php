@@ -95,7 +95,8 @@ class UserController extends Controller implements ClassResourceInterface
         $account = $this->getUser();
         
         $em = $this->getDoctrine()->getRepository("UserBundle:User");
-        $user = $em->findOneByAccount($this->getUser());
+        $user = $em->findOneByAccount($account);
+        
         $user->setName($paramFetcher->get('name'));
         $user->setLastname($paramFetcher->get('lastname'));
         $birthDate = new \DateTime($paramFetcher->get('birth_date'));
