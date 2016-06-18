@@ -43,7 +43,7 @@ class AccountController extends Controller implements ClassResourceInterface
      *     400 = "Returned when password and confirmation doesn't match"
      *   }
      * )
-     * @FOSRest\RequestParam(name="email", nullable=false, description="Account's email")
+     * @FOSRest\RequestParam(name="email", nullable=false, requirements=@CoreBundle\Validator\Constraints\Email, description="Account's email")
      * @FOSRest\RequestParam(name="password", nullable=false, description="Account's password")
      * @FOSRest\RequestParam(name="password_confirmation", nullable=false, description="Password confirmation")
      */

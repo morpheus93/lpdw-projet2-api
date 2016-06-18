@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Controller for user entity
  */
@@ -87,7 +88,7 @@ class UserController extends Controller implements ClassResourceInterface
      *   }
      * )
      * @FOSRest\RequestParam(name="name", nullable=false, requirements=@CoreBundle\Validator\Constraints\Name, description="User's name")
-     * @FOSRest\RequestParam(name="lastname", nullable=false, requirements=@CoreBundle\Validator\Constraints\Name, description="User's lastname")
+     * @FOSRest\RequestParam(name="lastname", nullable=false, requirements=@CoreBundle\Validator\Constraints\Name   ,description="User's lastname")
      * @FOSRest\RequestParam(name="birth_date", nullable=false, requirements=@CoreBundle\Validator\Constraints\Date, description="User's birth date")
      *
      */
