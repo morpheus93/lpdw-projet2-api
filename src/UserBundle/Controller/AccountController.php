@@ -6,6 +6,8 @@ namespace UserBundle\Controller;
 
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use FOS\RestBundle\Util\Codes;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use UserBundle\Entity\Account;
@@ -13,6 +15,12 @@ use FOS\RestBundle\Controller\Annotations as FOSRest;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use UserBundle\Event\RegistrationEvent;
+use UserBundle\Event\ResetPasswordEvent;
+use FOS\UserBundle\Event\FormEvent;
+use FOS\UserBundle\FOSUserEvents;
+use FOS\UserBundle\Model\UserInterface;
+use UserBundle\EventListener\RegistrationListener;
 
 
 /**
@@ -28,6 +36,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class AccountController extends Controller implements ClassResourceInterface
 {
+
     /**
      * Create account
      *
@@ -47,28 +56,36 @@ class AccountController extends Controller implements ClassResourceInterface
      * @FOSRest\RequestParam(name="password", nullable=false, description="Account's password")
      * @FOSRest\RequestParam(name="password_confirmation", nullable=false, description="Password confirmation")
      */
-    public function postAction(ParamFetcherInterface $paramFetcher)
+	public function postAction(ParamFetcherInterface $paramFetcher)
     {
         // TODO : Validator
-        // TODO : Add email validation
         if ($paramFetcher->get('password') !== $paramFetcher->get('password_confirmation')) {
             $resp = array("message" => "Password and confirmation password doesn't match");
-            return new JsonResponse($resp, 400);
+            return new JsonResponse($resp, JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $account = new Account();
         $account->setEmail($paramFetcher->get('email'));
         $account->setPlainPassword($paramFetcher->get('password'));
-        $account->setEnabled(true);
-	    
-        $userManager = $this->get("fos_user.user_manager");
+	    $validator = $this->get("validator");
+	    $errors = $validator->validate($account);
+
+	    if(count($errors) > 0){
+		    return new JsonResponse("already exist email", JsonResponse::HTTP_BAD_REQUEST);
+	    }
+
+	    $userManager = $this->get("fos_user.user_manager");
         $userManager->updateUser($account);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($account);
-        $em->flush();
+	    /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+	    $dispatcher = $this->get('event_dispatcher');
+	    $dispatcher->dispatch(RegistrationEvent::NAME, new RegistrationEvent($account));
 
-        return new JsonResponse(null, 201);
+	    $em = $this->getDoctrine()->getManager();
+	    $em->persist($account);
+	    $em->flush();
+
+        return new JsonResponse(null, JsonResponse::HTTP_CREATED);
     }
 
 	/**
@@ -76,7 +93,7 @@ class AccountController extends Controller implements ClassResourceInterface
 	 *
 	 * @param ParamFetcherInterface $paramFetcherInterface Contain all body parameters received
 	 *
-	 * @return JsonResponse Return 201 and empty array if account was created OR 400 and error message JSON if error
+	 * @return JsonResponse Return 204 and empty array if account was created OR 400 and error message JSON if error
 	 *
 	 * @ApiDoc(
 	 *  section="Accounts",
@@ -90,7 +107,8 @@ class AccountController extends Controller implements ClassResourceInterface
 	 * @FOSRest\Patch("/accounts/me/password")
 	 * @FOSRest\RequestParam(name="password", nullable=false, description="Account's password")
 	 * @FOSRest\RequestParam(name="password_confirmation", nullable=false, description="Password confirmation")
-	 * @Secure(roles="IS_AUTHENTICATED_FULLY")
+	 *
+	 * @Security("has_role('ROLE_DEFAULT')")
 	 *
 	 */
     public function patchPasswordAction(ParamFetcherInterface $paramFetcherInterface){
@@ -102,7 +120,7 @@ class AccountController extends Controller implements ClassResourceInterface
                 // TODO : Length constrainte
             } else {
                 $resp = array("message" => "Password and confirmation password doesn't match");
-                return new JsonResponse($resp, 400);
+                return new JsonResponse($resp, JsonResponse::HTTP_BAD_REQUEST);
             }
         }
 
@@ -111,7 +129,7 @@ class AccountController extends Controller implements ClassResourceInterface
         $em = $this->getDoctrine()->getManager();
         $em->persist($account);
         $em->flush();
-	    return new JsonResponse(null, 204);
+	    return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
 	/**
@@ -119,7 +137,7 @@ class AccountController extends Controller implements ClassResourceInterface
 	 *
 	 * @param ParamFetcherInterface $paramFetcherInterface Contain all body parameters received
 	 *
-	 * @return JsonResponse Return 201 and empty array if account was created OR 400 and error message JSON if error
+	 * @return JsonResponse Return 204 and empty array if account was created OR 400 and error message JSON if error
 	 *
 	 * @ApiDoc(
 	 *  section="Accounts",
@@ -132,7 +150,8 @@ class AccountController extends Controller implements ClassResourceInterface
 	 * )
 	 * @FOSRest\Patch("/accounts/me/email")
 	 * @FOSRest\RequestParam(name="email", nullable=false, description="Account's email")
-	 * @Secure(roles="IS_AUTHENTICATED_FULLY")
+	 *
+	 * @Security("has_role('ROLE_DEFAULT')")
 	 *
 	 */
     public function patchEmailAction(ParamFetcherInterface $paramFetcherInterface){
@@ -148,7 +167,7 @@ class AccountController extends Controller implements ClassResourceInterface
         $em = $this->getDoctrine()->getManager();
         $em->persist($account);
         $em->flush();
-	    return new JsonResponse(null, 204);
+	    return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
     /**
@@ -165,7 +184,7 @@ class AccountController extends Controller implements ClassResourceInterface
      *   }
      * )
      *
-     * @Secure(roles="ROLE_USER")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function cgetAction(){
         // TODO : Limit view to ROLE_ADMIN
@@ -199,8 +218,8 @@ class AccountController extends Controller implements ClassResourceInterface
      *   }
      * )
      *
-     * @Secure(roles="IS_AUTHENTICATED_FULLY")
-     */
+     * @Security("has_role('ROLE_DEFAULT')")
+    */
     public function getMeAction(){
         return $this->getAccountInfos($this->getUser());
     }
@@ -221,12 +240,160 @@ class AccountController extends Controller implements ClassResourceInterface
      * )
      * @ParamConverter("account", class="UserBundle:Account")
      *
-     * @Secure(roles="ROLE_USER")
+     * @Security("has_role('ROLE_DEFAULT')")
      */
     public function getAction(Account $account)
     {
         // TODO : Limit view to ROLE_ADMIN
 	    return $this->getAccountInfos($account);
     }
+
+	/**
+	 * Ask reset password token
+	 *
+	 * @param ParamFetcherInterface $paramFetcherInterface Contain all body parameters received
+	 * @return JsonResponse Return 200 and empty array if account was created OR 400 and error message JSON if error
+	 *
+	 * @ApiDoc(
+	 *  section="Accounts",
+	 *  description="Ask a token to reset password",
+	 *  resource = true,
+	 *  statusCodes = {
+	 *     200 = "Returned when successful",
+	 *     404 = "Returned when email is unknown"
+	 *   }
+	 * )
+	 * @FOSRest\RequestParam(name="email", nullable=false, description="Email")
+	 * @FOSRest\Post("/accounts/reset_password")
+	 */
+	public function postResetPasswordAction (ParamFetcherInterface $paramFetcherInterface) {
+		$email = $paramFetcherInterface->get('email');
+
+		if (is_null($email)) {
+			return new JsonResponse("unknown email", Codes::HTTP_BAD_REQUEST);
+		}
+
+		/** @var $user \FOS\UserBundle\Model\UserInterface */
+		$user = $this->get('fos_user.user_manager')->findUserByUsernameOrEmail($email);
+
+		if (null === $user) {
+			throw $this->createNotFoundException();
+		}
+
+		if ($user->isPasswordRequestNonExpired($this->getParameter('fos_user.resetting.token_ttl'))) {
+			return new JsonResponse("resetting.password_already_requested", Codes::HTTP_CONFLICT);
+		}
+
+		if (null === $user->getConfirmationToken()) {
+			/** @var $tokenGenerator \FOS\UserBundle\Util\TokenGeneratorInterface */
+			$tokenGenerator = $this->get('fos_user.util.token_generator');
+			$user->setConfirmationToken($tokenGenerator->generateToken());
+		}
+
+		$this->get('fos_user.mailer')->sendResettingEmailMessage($user);
+		$user->setPasswordRequestedAt(new \DateTime());
+		$this->get('fos_user.user_manager')->updateUser($user, true);
+		
+		return new JsonResponse([], Codes::HTTP_OK);
+
+	}
+
+	/**
+	 * Reset password with token
+	 *
+	 * @param ParamFetcherInterface $paramFetcherInterface Contain all body parameters received
+	 * @param String                $token
+	 *
+	 * @return JsonResponse Return 200 and empty array if account was created OR 400 and error message JSON if error
+	 *
+	 * @ApiDoc(
+	 *  section="Accounts",
+	 *  description="Reset password with token",
+	 *  resource = true,
+	 *  statusCodes = {
+	 *     200 = "Returned when successful",
+	 *     400 = "Returned when password and confirmation doesn't match",
+	 *     404 = "Returned when email is unknown"
+	 *   }
+	 * )
+	 * @FOSRest\RequestParam(name="password", nullable=false, description="New password")
+	 * @FOSRest\RequestParam(name="password_confirmation", nullable=false, description="New password confirmation")
+	 * @FOSRest\Post("/accounts/reset_password/{token}")
+	 */
+	public function postChangePasswordAction (ParamFetcherInterface $paramFetcherInterface, $token){
+
+		/** @var $user \FOS\UserBundle\Model\UserInterface */
+		$user = $this->get('fos_user.user_manager')->findUserByConfirmationToken($token);
+
+		$password = $paramFetcherInterface->get("password");
+		$password_confirmation = $paramFetcherInterface->get("password_confirmation");
+
+		if($password !== $password_confirmation){
+			$resp = array("message" => "Password and confirmation password doesn't match");
+			return new JsonResponse($resp, JsonResponse::HTTP_BAD_REQUEST);
+		}
+
+		if (null === $user) {
+			throw $this->createNotFoundException();
+		}
+
+		if (!$user->isPasswordRequestNonExpired($this->getParameter('fos_user.resetting.token_ttl'))) {
+			return new JsonResponse("resetting.password_request_expired", Codes::HTTP_GONE);
+		}
+
+		/** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+		$dispatcher = $this->get('event_dispatcher');
+		$event = new ResetPasswordEvent($user);
+		$dispatcher->dispatch(ResetPasswordEvent::NAME, $event);
+
+		$user->setPlainPassword($password);
+
+		$userManager = $this->get("fos_user.user_manager");
+		$userManager->updateUser($user);
+
+		$em = $this->getDoctrine()->getManager();
+		$em->persist($user);
+		$em->flush();
+
+		return new JsonResponse("", JsonResponse::HTTP_ACCEPTED);
+
+	}
+
+	/**
+	 * Validate an account with token
+	 *
+	 * @param String $token
+	 *
+	 * @return JsonResponse Return 200 and empty array if account was activated OR 404 if account was not found
+	 *
+	 * @ApiDoc(
+	 *  section="Accounts",
+	 *  description="Validate account with token",
+	 *  resource = true,
+	 *  statusCodes = {
+	 *     200 = "Returned when successful",
+	 *     404 = "Returned when email is unknown"
+	 *   }
+	 * )
+	 * @FOSRest\Post("/accounts/confirm_registration/{token}")
+	 */
+	public function postConfirmationRegistrationAction($token){
+		/** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+		$userManager = $this->get('fos_user.user_manager');
+
+		$user = $userManager->findUserByConfirmationToken($token);
+
+		if (null === $user) {
+			return new JsonResponse("", JsonResponse::HTTP_NOT_FOUND);
+		}
+
+
+		$user->setConfirmationToken(null);
+		$user->setEnabled(true);
+
+		$userManager->updateUser($user);
+
+		return new JsonResponse("", JsonResponse::HTTP_ACCEPTED);
+	}
 
 }

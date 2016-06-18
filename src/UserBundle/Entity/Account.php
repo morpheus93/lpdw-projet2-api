@@ -21,7 +21,17 @@ use JMS\Serializer\Annotation\Expose;
  * @ORM\Table(name="account")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\AccountRepository")
  * @ExclusionPolicy("all")
+ *
+ * @UniqueEntity(
+ *     fields={"username"},
+ *     message="constraints.unique",
+ * )
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     message="constraints.unique",
+ * )
  */
+
 // TODO : nullable = false et verifier champ validation
 class Account extends BaseUser
 
@@ -31,7 +41,8 @@ class Account extends BaseUser
 	const ROLE_ASSO = "ROLE_ASSO";
 
     use TimestampableEntity;
-    /**
+
+	/**
      * @var int
      *
      * @ORM\Column(name="id", type="integer")
@@ -275,11 +286,16 @@ class Account extends BaseUser
         return $this->img;
     }
 
-    public function setEmail($email)
+	/**
+	 * Set Email
+	 * @param string $email
+	 *
+	 * @return $this|static
+	 */
+	public function setEmail($email)
     {
         $this->setUsername($email);
         return parent::setEmail($email);
     }
-
 
 }

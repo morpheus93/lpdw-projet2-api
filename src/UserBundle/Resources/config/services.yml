@@ -2,3 +2,13 @@ services:
 #    user.example:
 #        class: UserBundle\Example
 #        arguments: ["@service_id", "plain_value", %parameter%]
+    user.reset_password_listener:
+            class: UserBundle\EventListener\ResetPasswordListener
+            tags:
+                - { name: kernel.event_subscriber }
+
+    user.register_listener:
+        class: UserBundle\EventListener\RegistrationListener
+        arguments: ['@fos_user.mailer', '@fos_user.util.token_generator']
+        tags:
+           - { name: kernel.event_subscriber }
