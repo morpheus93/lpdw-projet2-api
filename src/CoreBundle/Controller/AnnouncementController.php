@@ -249,6 +249,8 @@ namespace CoreBundle\Controller;
 	 */
     public function postReceiveAction(ParamFetcherInterface $paramFetcher, Announcement $announce){
         $account = $this->getUser();
+
+
         $receive = new Receive();
 
         // TODO : Enlever le parametre amount
@@ -256,23 +258,31 @@ namespace CoreBundle\Controller;
             $resp = array("message" => "This announcement does not exist");
             return new JsonResponse($resp, 400);
         }
+		$em = $this->getDoctrine()->getRepository("UserBundle:Association");
 
-        $em = $this->getDoctrine()->getRepository("UserBundle:Association");
         $asso = $em->findOneByAccount($account);
+
+        $em = $this->getDoctrine()->getRepository("CoreBundle:Receive");
+        if($em->getById($asso, $announce)){
+            $resp = array("message" => "Vous avez déjà fait une demande pour cette annonce");
+            return new JsonResponse($resp, 400);
+        }
+
         $quantity = $paramFetcher->get('quantity');
         $receive->setAssociation($asso);
         $receive->setAnnouncement($announce);
         $receive->setQuantity($quantity);
 
         if($announce->getMinCollect() > $quantity){
-        	$resp = array("message" => "Vous pouvez prendre une quantité minimum de ".$announce->getMinCollect());
+        	$resp = array("message" => "Vous ne pouvez prendre une quantité minimum de ".$announce->getMinCollect()." pour cette annonce");
         	return new JsonResponse($resp, 400);
         }
 
-        if($announce->getMinCollect() <= $quantity){
-        	$resp = array("message" => "Vous pouvez prendre une quantité maximum de ".$announce->getMaxCollect());
+        if($announce->getMaxCollect() < $quantity){
+        	$resp = array("message" => "Vous ne pouvez prendre une quantité maximum de ".$announce->getMaxCollect()." pour cette annonce");
         	return new JsonResponse($resp, 400);
         }
+        
         $em = $this->getDoctrine()->getManager();
         $em->persist($receive);
         $em->flush();
