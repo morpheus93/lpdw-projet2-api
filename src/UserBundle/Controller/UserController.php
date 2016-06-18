@@ -71,4 +71,40 @@ class UserController extends Controller implements ClassResourceInterface
 
         return new JsonResponse(null, 201);
     }
+
+    /**
+     * Update User of an account
+     *
+     * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+     * @return JsonResponse Return 201 and empty array if account was linked OR 400 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Users",
+     *  description="Update User",
+     *  resource = true,
+     *  statusCodes = {
+     *     204 = "Returned when successful",
+     *   }
+     * )
+     * @FOSRest\RequestParam(name="name", nullable=false, requirements=@CoreBundle\Validator\Constraints\Name, description="User's name")
+     * @FOSRest\RequestParam(name="lastname", nullable=false, requirements=@CoreBundle\Validator\Constraints\Name, description="User's lastname")
+     * @FOSRest\RequestParam(name="birth_date", nullable=false, requirements=@CoreBundle\Validator\Constraints\Date, description="User's birth date")
+     *
+     */
+    public function patchAction(ParamFetcherInterface $paramFetcher){
+        $account = $this->getUser();
+        
+        $em = $this->getDoctrine()->getRepository("UserBundle:User");
+        $user = $em->findOneByAccount($this->getUser());
+        $user->setName($paramFetcher->get('name'));
+        $user->setLastname($paramFetcher->get('lastname'));
+        $birthDate = new \DateTime($paramFetcher->get('birth_date'));
+        $user->setBirthDate($birthDate);
+        
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
+
+        return new JsonResponse(null, 204);
+    }
 }
