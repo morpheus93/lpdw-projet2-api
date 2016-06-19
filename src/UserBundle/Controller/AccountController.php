@@ -374,7 +374,7 @@ class AccountController extends Controller implements ClassResourceInterface
 			$user->setConfirmationToken($tokenGenerator->generateToken());
 		}
 
-		$this->get('fos_user.mailer')->sendResettingEmailMessage($user);
+		$this->get('user.mailer')->sendResettingEmailMessage($user);
 		$user->setPasswordRequestedAt(new \DateTime());
 		$this->get('fos_user.user_manager')->updateUser($user, true);
 		
