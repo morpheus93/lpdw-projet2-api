@@ -10,5 +10,16 @@ namespace CoreBundle\Repository;
  */
 class ProjectRepository extends \Doctrine\ORM\EntityRepository
 {
+	public function getByState($asso_id)
+	{
+		$query = $this->createQueryBuilder('p')
+			->select('COUNT(p)')
+			->setParameter('asso_id', $asso_id)
+			->where('p.association = :asso_id')
+			->AndWhere('p.state = 1')
+			->getQuery();
+
+		return $query->getSingleScalarResult();
+	}
 }
  

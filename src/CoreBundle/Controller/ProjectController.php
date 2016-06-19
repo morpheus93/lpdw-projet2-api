@@ -48,19 +48,32 @@ class ProjectController extends Controller implements ClassResourceInterface
      *  resource = true,
      *  statusCodes = {
      *     201 = "Returned when successful",
+     *     400 = "Returned when already have project",
      *   }
      * )
      * @FOSRest\RequestParam(name="name", nullable=false, description="Project's name")
      * @FOSRest\RequestParam(name="description", nullable=false, description="Project's description")
+     * @FOSRest\FileParam(name="banner", image=true, default="noPicture")
      *
      */
 	public function postAction(ParamFetcherInterface $paramFetcher){
 		$account = $this->getUser();
         $association = $this->getDoctrine()->getRepository('UserBundle:Association')->findOneBy(["account" => $account]);
 		// TODO : Date publication
-		// TODO : Ajout de l'image
+
+        $waitingProject = $this->getDoctrine()->getRepository('CoreBundle:Project')->getByState($association);
+        if($waitingProject > 0){
+            $resp = array("message" => "You already have a project pending validation");
+            return new JsonResponse($resp, 200);
+        }
+
         $date = new \DateTime();
         $project = new Project();
+        $banner = $paramFetcher->get('banner');
+        $fileName = $this->get('projects.banners_uploader')->upload("banner", $banner);
+        $project->setBanner($fileName);
+
+ 
         $project->setAssociation($association);
         $project->setName($paramFetcher->get('name'));
         $project->setDescription($paramFetcher->get('description'));
@@ -81,7 +94,7 @@ class ProjectController extends Controller implements ClassResourceInterface
 	 * @param Project               $project
 	 * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
 	 *
-	 * @return JsonResponse Return 201 and empty array if account was linked OR 400 and error message JSON if error
+	 * @return JsonResponse Return 201 and empty array if project was updated OR 400 and error message JSON if error
 	 *
 	 * @ApiDoc(
 	 *  section="Projects",
@@ -103,6 +116,41 @@ class ProjectController extends Controller implements ClassResourceInterface
         $em->persist($project);
         $em->flush();
         return new JsonResponse(null, 201);
+    }
+
+    /**
+     * Validate a project
+     *
+     * @param Project               $project
+     * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+     *
+     * @return JsonResponse Return 200 and empty array if account was linked OR 400 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Projects",
+     *  description="Update a project",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *   }
+     * )
+     * @FOSRest\RequestParam(name="state", requirements="(open|refused)", nullable=false, description="Project's validation")
+     *
+     * @Secure(roles="ROLE_ADMIN")
+     */
+    public function patchValidateAction(Project $project, ParamFetcherInterface $paramFetcher){
+
+        if($project->getState() == "waiting validation"){
+            $project->setState($paramFetcher->get('state'));
+        } else {
+            $resp = array("message" => "This project is not in waiting validation");
+            return new JsonResponse($resp, 400);
+        }
+        
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($project);
+        $em->flush();
+        return new JsonResponse(null, 200);
     }
 
 	/**

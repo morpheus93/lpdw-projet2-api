@@ -67,9 +67,9 @@ class Project
     private $state;
 
     /**
-     * @var Text Project banner image
+     * @var string Project banner image
      *
-     * @ORM\Column(name="banner", type="text", nullable=true)
+     * @ORM\Column(name="banner", type="string", nullable=true)
      */
     private $banner;
 
