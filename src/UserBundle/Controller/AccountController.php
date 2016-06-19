@@ -354,7 +354,7 @@ class AccountController extends Controller implements ClassResourceInterface
 		$email = $paramFetcherInterface->get('email');
 
 		if (is_null($email)) {
-			return new JsonResponse("unknown email", Codes::HTTP_BAD_REQUEST);
+			return new JsonResponse("unknown email", JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		/** @var $user \FOS\UserBundle\Model\UserInterface */
@@ -365,7 +365,7 @@ class AccountController extends Controller implements ClassResourceInterface
 		}
 
 		if ($user->isPasswordRequestNonExpired($this->getParameter('fos_user.resetting.token_ttl'))) {
-			return new JsonResponse("resetting.password_already_requested", Codes::HTTP_CONFLICT);
+			return new JsonResponse("resetting.password_already_requested", JsonResponse::HTTP_CONFLICT);
 		}
 
 		if (null === $user->getConfirmationToken()) {
@@ -378,7 +378,7 @@ class AccountController extends Controller implements ClassResourceInterface
 		$user->setPasswordRequestedAt(new \DateTime());
 		$this->get('fos_user.user_manager')->updateUser($user, true);
 		
-		return new JsonResponse([], Codes::HTTP_OK);
+		return new JsonResponse([], JsonResponse::HTTP_OK);
 
 	}
 
@@ -422,7 +422,7 @@ class AccountController extends Controller implements ClassResourceInterface
 		}
 
 		if (!$user->isPasswordRequestNonExpired($this->getParameter('fos_user.resetting.token_ttl'))) {
-			return new JsonResponse("resetting.password_request_expired", Codes::HTTP_GONE);
+			return new JsonResponse("resetting.password_request_expired", JsonResponse::HTTP_GONE);
 		}
 
 		/** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
