@@ -14,6 +14,7 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use UserBundle\Entity\Account;
 
 /**
  * Class ProjectController
@@ -215,7 +216,14 @@ class ProjectController extends Controller implements ClassResourceInterface
 	**/
     public function cgetAction()
     {
-    	$projects = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
+        $account = $this->getUser();
+
+        if ($account->hasRole(Account::ROLE_SUPER_ADMIN)) {
+            $projects = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
+        } elseif ($account->hasRole(Account::ROLE_DEFAULT)) {
+            $projects = $this->getDoctrine()->getRepository('CoreBundle:Project')->findByVisibility(1);
+        }
+    	
     	return $projects;
     }
 
