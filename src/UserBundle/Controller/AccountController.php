@@ -132,6 +132,66 @@ class AccountController extends Controller implements ClassResourceInterface
 	    return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
+
+
+    /**
+     * Update account
+     *
+     * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+     * @return JsonResponse Return 200 and empty array if account was updated OR 400 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Accounts",
+     *  description="Update my account",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when password and confirmation doesn't match"
+     *   }
+     * )
+     * @FOSRest\RequestParam(name="address", nullable=true, description="Account's address")
+     * @FOSRest\RequestParam(name="region", nullable=true, description="Account's region")
+     * @FOSRest\RequestParam(name="phone", nullable=true, description="Account's phone")
+     * @FOSRest\RequestParam(name="city", nullable=true, description="Account's city")
+     * @FOSRest\RequestParam(name="country", nullable=true, description="Account's country")
+	 *
+     * @FOSRest\Patch("/me")
+     *
+     */
+	public function patchAction(ParamFetcherInterface $paramFetcher)
+    {
+        $account = $this->getUser();
+
+        $account->setAddress($paramFetcher->get('address'));
+        $account->setRegion($paramFetcher->get('region'));
+        $account->setPhone($paramFetcher->get('phone'));
+        $account->setCountry($paramFetcher->get('country'));
+        $account->setCity($paramFetcher->get('city'));
+
+
+	    $validator = $this->get("validator");
+	    $errors = $validator->validate($account);
+
+	    if(count($errors) > 0){
+		    return new JsonResponse("already exist email", JsonResponse::HTTP_BAD_REQUEST);
+	    }
+
+	    $userManager = $this->get("fos_user.user_manager");
+        $userManager->updateUser($account);
+
+	    $em = $this->getDoctrine()->getManager();
+	    $em->persist($account);
+	    $em->flush();
+
+        return new JsonResponse(null, JsonResponse::HTTP_CREATED);
+    }
+
+
+
+
+
+
+
 	/**
 	 * Update an account's email
 	 *
