@@ -134,7 +134,7 @@ class ProjectController extends Controller implements ClassResourceInterface
      *     200 = "Returned when successful",
      *   }
      * )
-     * @FOSRest\RequestParam(name="state", requirements="\d+", nullable=false, description="Project's validation")
+     * @FOSRest\RequestParam(name="state", requirements="(open|refused)", nullable=false, description="Project's validation")
      *
      * @Secure(roles="ROLE_ADMIN")
      */
