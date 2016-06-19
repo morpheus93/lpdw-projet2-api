@@ -24,3 +24,7 @@ parameters:
     jwt_token_ttl:        86400
     owner_email:            '' # Website owner email address
     contact_email:          '' # Contact email address
+    base_url:               '' # Front website base url. Ex : http://colab.org
+    profile_url:            '' # Profile route EX : /profile
+    endpoint_signup:        '' # Signup endpoint EX : /signup/ending
+    reset_password:         '' # Reset password url EX : /reset
