@@ -271,12 +271,70 @@ namespace CoreBundle\Controller;
         $receive->setQuantity($quantity);
 
         if($announce->getMinCollect() > $quantity){
-        	$resp = array("message" => "The maximum amount is ".$announce->getMinCollect()." for this announce");
+        	$resp = array("message" => "The minimum amount is ".$announce->getMinCollect()." for this announce");
         	return new JsonResponse($resp, 400);
         }
 
         if($announce->getMaxCollect() < $quantity){
-        	$resp = array("message" => "The minimum amount is ".$announce->getMaxCollect()." for this announce");
+        	$resp = array("message" => "The maximum amount is ".$announce->getMaxCollect()." for this announce");
+        	return new JsonResponse($resp, 400);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($receive);
+        $em->flush();
+
+        return new JsonResponse(null, 201);
+    }
+
+	/**
+	 * Update a receive
+	 *
+	 * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+	 * @param Announcement $Announce
+	 * @param Receive $Receive
+	 *
+	 * @return JsonResponse Return 201 if receive is updated OR 401 for unauthorized OR 400 and error message JSON if error
+	 *
+	 * @ApiDoc(
+	 *  section="Announcement",
+	 *  description="Update receive",
+	 *  resource = true,
+	 *  statusCodes = {
+	 *     201 = "Returned when successful",
+	 *   }
+	 * )
+	 *
+	 * @FOSRest\RequestParam(name="quantity", nullable=false, requirements="\d+", description="Receive's quantity")
+	 * @FOSRest\RequestParam(name="message", nullable=true, description="Receive's message")
+	 */
+    public function patchReceiveAction(ParamFetcherInterface $paramFetcher, Announcement $announce, Receive $receive){
+        $account = $this->getUser();
+
+        if (!$announce) {
+            $resp = array("message" => "This announcement does not exist");
+            return new JsonResponse($resp, 400);
+        }
+        if (!$receive) {
+            $resp = array("message" => "This receive does not exist");
+            return new JsonResponse($resp, 400);
+        }
+        if($account != $receive->getAssociation()->getAccount()){
+            $resp = array("message" => "You don't have the permission to update this receive");
+            return new JsonResponse($resp, 401);
+        }
+
+        $quantity = $paramFetcher->get('quantity');
+        $receive->setMessage($paramFetcher->get('message'));
+        $receive->setQuantity($quantity);
+
+        if($announce->getMinCollect() > $quantity){
+        	$resp = array("message" => "The minimum amount is ".$announce->getMinCollect()." for this announce");
+        	return new JsonResponse($resp, 400);
+        }
+
+        if($announce->getMaxCollect() < $quantity){
+        	$resp = array("message" => "The maximum amount is ".$announce->getMaxCollect()." for this announce");
         	return new JsonResponse($resp, 400);
         }
 

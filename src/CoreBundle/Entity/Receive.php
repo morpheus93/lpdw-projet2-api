@@ -35,6 +35,13 @@ class Receive
      */
     private $quantity;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="message", type="text", nullable=true)
+     */
+    private $message;
+
     /** 
      * @ORM\ManyToOne(targetEntity="UserBundle\Entity\Association", inversedBy="announcementReceive") 
      * @ORM\JoinColumn(name="association_id", referencedColumnName="id", nullable=false) 
@@ -127,5 +134,29 @@ class Receive
     public function getAnnouncement()
     {
         return $this->announcement;
+    }
+
+    /**
+     * Set message
+     *
+     * @param string $message
+     *
+     * @return Receive
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    /**
+     * Get message
+     *
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 }
