@@ -36,6 +36,7 @@ security:
 
     access_control:
 
+        - { path: ^/contact, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST] }
         - { path: ^/accounts, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST] }
         - { path: ^/accounts/confirm_registration, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST] }
         - { path: ^/accounts/reset_password, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [POST] }
