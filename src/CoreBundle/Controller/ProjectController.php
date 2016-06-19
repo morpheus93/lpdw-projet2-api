@@ -94,7 +94,7 @@ class ProjectController extends Controller implements ClassResourceInterface
 	 * @param Project               $project
 	 * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
 	 *
-	 * @return JsonResponse Return 201 and empty array if account was linked OR 400 and error message JSON if error
+	 * @return JsonResponse Return 201 and empty array if project was updated OR 400 and error message JSON if error
 	 *
 	 * @ApiDoc(
 	 *  section="Projects",
@@ -116,6 +116,40 @@ class ProjectController extends Controller implements ClassResourceInterface
         $em->persist($project);
         $em->flush();
         return new JsonResponse(null, 201);
+    }
+
+    /**
+     * Validate a project
+     *
+     * @param Project               $project
+     * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+     *
+     * @return JsonResponse Return 200 and empty array if account was linked OR 400 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Projects",
+     *  description="Update a project",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *   }
+     * )
+     * @FOSRest\RequestParam(name="state", requirements="\d+", nullable=false, description="Project's validation")
+     *
+     */
+    public function patchValidateAction(Project $project, ParamFetcherInterface $paramFetcher){
+
+        if($project->getState() == "waiting validation"){
+            $project->setState($paramFetcher->get('state'));
+        } else {
+            $resp = array("message" => "This project is not in waiting validation");
+            return new JsonResponse($resp, 400);
+        }
+        
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($project);
+        $em->flush();
+        return new JsonResponse(null, 200);
     }
 
 	/**
