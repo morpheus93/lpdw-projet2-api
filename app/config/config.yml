@@ -10,6 +10,7 @@ imports:
 parameters:
     locale: fr
     associations_doc_directory: '%kernel.root_dir%/../web/uploads/associations'
+    accounts_images_directory: '%kernel.root_dir%/../web/uploads/accounts'
 
 framework:
     #esi:             ~

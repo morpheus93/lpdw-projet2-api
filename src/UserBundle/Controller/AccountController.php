@@ -146,7 +146,6 @@ class AccountController extends Controller implements ClassResourceInterface
      *  resource = true,
      *  statusCodes = {
      *     200 = "Returned when successful",
-     *     400 = "Returned when password and confirmation doesn't match"
      *   }
      * )
      * @FOSRest\RequestParam(name="address", nullable=true, description="Account's address")
@@ -186,12 +185,6 @@ class AccountController extends Controller implements ClassResourceInterface
         return new JsonResponse(null, JsonResponse::HTTP_CREATED);
     }
 
-
-
-
-
-
-
 	/**
 	 * Update an account's email
 	 *
@@ -228,6 +221,48 @@ class AccountController extends Controller implements ClassResourceInterface
         $em->persist($account);
         $em->flush();
 	    return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+
+	/**
+	 * Add image to account
+	 *
+	 * @param ParamFetcherInterface $paramFetcherInterface Contain all body parameters received
+	 *
+	 * @return JsonResponse Return 204 and empty array if account was created OR 400 and error message JSON if error
+	 *
+	 * @ApiDoc(
+	 *  section="Accounts",
+	 *  description="Add image to account",
+	 *  resource = true,
+	 *  statusCodes = {
+	 *     201 = "Returned when successful"
+	 *   }
+	 * )
+	 * @FOSRest\Post("/me/image")
+	 * @FOSRest\FileParam(name="img", image=true, default="noPicture")
+	 *
+	 * @Security("has_role('ROLE_DEFAULT')")
+	 *
+	 */
+    public function postImageAction(ParamFetcherInterface $paramFetcherInterface){
+        $account = $this->getUser();
+
+	    $img = $paramFetcherInterface->get("img");
+	    
+	    if($account->getImg() != null){
+	    	unlink($this->container->getParameter('accounts_images_directory')."/".$account->getImg());    	
+	    }
+
+	    $fileName = $this->get('user.images_uploader')->upload("img", $img);
+	    $account->setImg($fileName);
+
+        $userManager = $this->get("fos_user.user_manager");
+        $userManager->updateUser($account);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($account);
+        $em->flush();
+
+	    return new JsonResponse(null, 201);
     }
 
     /**

@@ -5,3 +5,6 @@ services:
     user.documents_uploader:
         class: CoreBundle\Service\FileUploader
         arguments: ['%associations_doc_directory%']
+    user.images_uploader:
+        class: CoreBundle\Service\FileUploader
+        arguments: ['%accounts_images_directory%']
