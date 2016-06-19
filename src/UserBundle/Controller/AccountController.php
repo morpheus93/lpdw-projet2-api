@@ -194,36 +194,6 @@ class AccountController extends Controller implements ClassResourceInterface
         return $accounts;
     }
 
-	/**
-	 * Get account info
-	 *
-	 * @param Account $account
-	 *
-	 * @return null|User|Association
-	 */
-    private function getAccountInfos(Account $account) {
-	    // TODO : Get assos ou user info
-	    $resp   = null;
-	    $infos  = null;
-	    $table  = null;
-
-	    if ($account->hasRole(Account::ROLE_ASSO)) {
-		    $table = "Association";
-
-	    } elseif ($account->hasRole(Account::ROLE_USER)) {
-		    $table = "User";
-	    }
-
-	    $em = $this->getDoctrine()->getRepository("UserBundle:".$table);
-	    $infos = $em->findOneByAccount($account);
-
-	    if(!$infos){
-		    return new JsonResponse(null, JsonResponse::HTTP_NOT_FOUND);
-	    }
-		/** @var  Association|User $infos */
-	    return $infos;
-    }
-
    /**
      * Get current user account 's
      * @return JsonResponse Return 200 and Account array if account was founded OR 404 and error message JSON if error
@@ -237,7 +207,7 @@ class AccountController extends Controller implements ClassResourceInterface
      *     404 = "Returned when account is not found"
      *   }
      * )
-     *
+     * @FOSRest\Get("/me")
      * @Security("has_role('ROLE_DEFAULT')")
     */
     public function getMeAction(){
@@ -414,6 +384,35 @@ class AccountController extends Controller implements ClassResourceInterface
 		$userManager->updateUser($user);
 
 		return new JsonResponse("", JsonResponse::HTTP_ACCEPTED);
+	}
+
+	/**
+	 * Get account info
+	 *
+	 * @param Account $account
+	 *
+	 * @return null|User|Association
+	 */
+	private function getAccountInfos(Account $account) {
+		$resp   = null;
+		$infos  = null;
+		$table  = null;
+
+		if ($account->hasRole(Account::ROLE_ASSO)) {
+			$table = "Association";
+
+		} elseif ($account->hasRole(Account::ROLE_USER)) {
+			$table = "User";
+		}
+
+		$em = $this->getDoctrine()->getRepository("UserBundle:".$table);
+		$infos = $em->findOneByAccount($account);
+
+		if(!$infos){
+			return new JsonResponse(null, JsonResponse::HTTP_NOT_FOUND);
+		}
+		/** @var  Association|User $infos */
+		return $infos;
 	}
 
 }
