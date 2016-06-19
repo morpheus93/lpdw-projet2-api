@@ -88,7 +88,7 @@ class Association{
     protected $validation;
     
     /**
-     * @ORM\Column(name="files",type="blob", nullable=true)
+     * @ORM\Column(name="files",type="string", nullable=true)
      * @Expose
      */
     protected $files;
