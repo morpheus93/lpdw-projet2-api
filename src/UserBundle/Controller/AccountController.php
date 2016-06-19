@@ -132,7 +132,6 @@ class AccountController extends Controller implements ClassResourceInterface
 	    return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
-
 	/**
 	 * Update an account's email
 	 *
@@ -403,7 +402,7 @@ class AccountController extends Controller implements ClassResourceInterface
 			$em = $this->getDoctrine()->getRepository("UserBundle:Association");
 			$infos = $em->findOneByAccount($account);
 		} elseif ($account->hasRole(Account::ROLE_USER)) {
-			$em = $this->getDoctrine()->getRepository("UserBundle:Association");
+			$em = $this->getDoctrine()->getRepository("UserBundle:User");
 			$infos = $em->findOneByAccount($account);
 		}
 

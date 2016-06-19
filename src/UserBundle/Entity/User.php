@@ -6,13 +6,20 @@ namespace UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * User
  *
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\UserRepository")
- */
+ *
+ * @UniqueEntity(
+ *     fields={"account"},
+ *     message="constraints.unique",
+ * )
+ **/
+
 class User{
 
 	/**
@@ -46,7 +53,7 @@ class User{
     protected $birth_date;
 
     /**
-    * @ORM\ManyToOne(targetEntity="Account")
+    * @ORM\OneToOne(targetEntity="Account")
     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
     */
     private $account;
