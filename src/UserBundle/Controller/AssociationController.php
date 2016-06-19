@@ -57,6 +57,7 @@ class AssociationController extends Controller implements ClassResourceInterface
      * @FOSRest\RequestParam(name="leader_phone", nullable=false, description="Association's leader phone")
      * @FOSRest\RequestParam(name="leader_email", nullable=false, description="Association's leader email")
      * @FOSRest\RequestParam(name="files", nullable=false, description="Association's confirmation files")
+     * @FOSRest\FileParam(name="asso_files", nullable=false, requirements={"mimeTypes"= {"image/png", "image/jpeg", "application/pdf", "image/bmp"}, "maxSize"="700k"}, description="Association's document",strict=true)
      * @Security("has_role('ROLE_DEFAULT')")
      */
     public function postAction(ParamFetcherInterface $paramFetcher){
