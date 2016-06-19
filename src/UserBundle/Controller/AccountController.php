@@ -132,6 +132,7 @@ class AccountController extends Controller implements ClassResourceInterface
 	    return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
+
 	/**
 	 * Update an account's email
 	 *

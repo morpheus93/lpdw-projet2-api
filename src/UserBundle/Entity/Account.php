@@ -58,30 +58,33 @@ class Account extends BaseUser
     protected $address;
 
     /**
-     * @ORM\Column(name="firstname",type="string", length=25, nullable=true)
+     * @ORM\Column(name="city",type="string", length=25, nullable=true)
      * @expose
      */
     protected $city;
 
     /**
-     * @ORM\Column(name="lastname",type="string", length=25, nullable=true)
+     * @ORM\Column(name="country",type="string", length=25, nullable=true)
      * @expose
      */
     protected $country;
 
     /**
-     * @ORM\Column(name="admin_validation",type="boolean", nullable=true)
+     * @ORM\Column(name="region",type="boolean", nullable=true)
+     * @expose
      */
     protected $region;
 
 
     /**
-     * @ORM\Column(name="postalcode", type="string", nullable=true)
+     * @ORM\Column(name="phone", type="string", nullable=true)
+     * @expose
      */
     protected $phone;
 
     /**
      * @ORM\Column(name="img", type="string", length=255, nullable=true)
+     * @expose
      */
     protected $img;
 
@@ -89,7 +92,7 @@ class Account extends BaseUser
      * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Promise", mappedBy="account", cascade={"persist"})
      */
     protected $projectPromise;
-    
+
     /**
      * Add projectPromise
      *

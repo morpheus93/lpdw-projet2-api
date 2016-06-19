@@ -7,6 +7,8 @@ namespace UserBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
 /**
  * Association
@@ -22,6 +24,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *     message="constraints.unique",
  * )
  *
+ * @ExclusionPolicy("all")
  */
 
 class Association{
@@ -36,54 +39,64 @@ class Association{
     protected $id;
 
     /**
-     * @ORM\Column(name="code",type="string", length=25, nullable=false, unique=true)
+     * @ORM\Column(name="code",type="string", length=25, nullable=true, unique=true)
+     * @Expose
      */
     protected $code;
 
     /**
      * @ORM\Column(name="name",type="string", length=25, nullable=false, unique=true)
+     * @Expose
      */
     protected $name;
 
     /**
      * @Gedmo\Slug(fields={"name"}, updatable=false)
      * @ORM\Column(length=255, unique=true)
+     * @Expose
      */
     private $slug;
 
     /**
      * @ORM\Column(name="description",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $description;
 
     /**
-     * @ORM\Column(name="leader_name",type="string", length=25, nullable=false)
+     * @ORM\Column(name="leader_name",type="string", length=25, nullable=true, unique=true)
+     * @Expose
      */
     protected $leader_name;
 
     /**
      * @ORM\Column(name="leader_phone",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $leader_phone;
 
     /**
      * @ORM\Column(name="leader_email",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $leader_email;
 
     /**
      * @ORM\Column(name="validation",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $validation;
     
     /**
      * @ORM\Column(name="files",type="blob", nullable=true)
+     * @Expose
      */
     protected $files;
 
     /**
     * @ORM\ManyToOne(targetEntity="Account")
     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+    * @Expose
     */
     protected $account;
 
