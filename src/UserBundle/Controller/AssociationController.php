@@ -75,10 +75,10 @@ class AssociationController extends Controller implements ClassResourceInterface
     }
 
     /**
-     * Link account with association
+     * Update an association
      *
      * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
-     * @return JsonResponse Return 204 and empty array if account was linked OR 400 and error message JSON if error
+     * @return JsonResponse Return 204 if account was updated OR 400 and error message JSON if error
      *
      * @ApiDoc(
      *  section="Associations",

@@ -6,12 +6,15 @@ namespace UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
 /**
  * Association
  *
  * @ORM\Table(name="association")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\AssociationRepository")
+ * @ExclusionPolicy("all")
  */
 class Association{
 
@@ -26,53 +29,63 @@ class Association{
 
     /**
      * @ORM\Column(name="code",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $code;
 
     /**
      * @ORM\Column(name="name",type="string", length=25, nullable=false)
+     * @Expose
      */
     protected $name;
 
     /**
      * @Gedmo\Slug(fields={"name"}, updatable=false)
      * @ORM\Column(length=255, unique=true)
+     * @Expose
      */
     private $slug;
 
     /**
      * @ORM\Column(name="description",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $description;
 
     /**
      * @ORM\Column(name="leader_name",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $leader_name;
 
     /**
      * @ORM\Column(name="leader_phone",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $leader_phone;
 
     /**
      * @ORM\Column(name="leader_email",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $leader_email;
 
     /**
      * @ORM\Column(name="validation",type="string", length=25, nullable=true)
+     * @Expose
      */
     protected $validation;
     
     /**
      * @ORM\Column(name="files",type="blob", nullable=true)
+     * @Expose
      */
     protected $files;
 
     /**
     * @ORM\ManyToOne(targetEntity="Account")
     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+    * @Expose
     */
     protected $account;
 
