@@ -132,6 +132,7 @@ class AccountController extends Controller implements ClassResourceInterface
 	    return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
+
 	/**
 	 * Update an account's email
 	 *
@@ -200,8 +201,17 @@ class AccountController extends Controller implements ClassResourceInterface
     * @return Array
     */
     private function getAccountInfos(Account $account){
+    	$role = $account->getRoles();
 
-        // TODO : Get assos ou user info
+	    if(in_array("ROLE_ASSO",$role)){
+	        $em = $this->getDoctrine()->getRepository("UserBundle:Association");
+	        return $association = $em->findOneByAccount($account);
+		}
+		if(in_array("ROLE_USER",$role) || in_array("ROLE_ADMIN",$role)){
+	        $em = $this->getDoctrine()->getRepository("UserBundle:User");
+	        return $user = $em->findOneByAccount($account);
+		}
+
     }
 
    /**
