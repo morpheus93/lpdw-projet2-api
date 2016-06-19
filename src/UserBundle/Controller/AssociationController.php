@@ -96,6 +96,26 @@ class AssociationController extends Controller implements ClassResourceInterface
 
         return new JsonResponse(null, JsonResponse::HTTP_CREATED);
     }
+    
+    /**
+     * Get all associations
+     *
+     * @return Association Empty Association array if no association founded
+     *
+     * @ApiDoc(
+     *  section="Associations",
+     *  description="Get all associations",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *   }
+     * )
+     * @Security("has_role('ROLE_DEFAULT')")
+     **/
+    public function cgetAction(){
+        $associations = $this->getDoctrine()->getRepository('UserBundle:Association')->findAll();
+        return $associations;
+    }
 
     /**
      * Update an association
