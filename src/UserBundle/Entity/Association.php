@@ -6,13 +6,24 @@ namespace UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Association
  *
  * @ORM\Table(name="association")
  * @ORM\Entity(repositoryClass="UserBundle\Repository\AssociationRepository")
+ * @UniqueEntity(
+ *     fields={"name"},
+ *     message="constraints.unique",
+ * )
+ * @UniqueEntity(
+ *     fields={"code"},
+ *     message="constraints.unique",
+ * )
+ *
  */
+
 class Association{
 
 	/**
@@ -25,12 +36,12 @@ class Association{
     protected $id;
 
     /**
-     * @ORM\Column(name="code",type="string", length=25, nullable=true)
+     * @ORM\Column(name="code",type="string", length=25, nullable=false, unique=true)
      */
     protected $code;
 
     /**
-     * @ORM\Column(name="name",type="string", length=25, nullable=false)
+     * @ORM\Column(name="name",type="string", length=25, nullable=false, unique=true)
      */
     protected $name;
 
@@ -46,7 +57,7 @@ class Association{
     protected $description;
 
     /**
-     * @ORM\Column(name="leader_name",type="string", length=25, nullable=true)
+     * @ORM\Column(name="leader_name",type="string", length=25, nullable=false)
      */
     protected $leader_name;
 

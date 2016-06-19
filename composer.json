@@ -30,8 +30,8 @@
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "jms/serializer-bundle": "^1.1",
         "lexik/jwt-authentication-bundle": "^1.5",
-        "friendsofsymfony/rest-bundle": "^1.7",
-        "stof/doctrine-extensions-bundle": "^1.2",
+        "friendsofsymfony/rest-bundle": "^2.0@dev",
+	    "stof/doctrine-extensions-bundle": "^1.2",
         "nelmio/api-doc-bundle": "^2.12",
         "jms/security-extra-bundle": "^1.6"
     },

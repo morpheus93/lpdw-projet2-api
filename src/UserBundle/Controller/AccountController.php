@@ -6,22 +6,22 @@ namespace UserBundle\Controller;
 
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
+use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use UserBundle\Entity\Account;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
-use JMS\SecurityExtraBundle\Annotation\Secure;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use UserBundle\Entity\Association;
+use UserBundle\Entity\User;
 use UserBundle\Event\RegistrationEvent;
 use UserBundle\Event\ResetPasswordEvent;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Model\UserInterface;
 use UserBundle\EventListener\RegistrationListener;
-
 
 /**
  * Class AccountController
@@ -189,19 +189,38 @@ class AccountController extends Controller implements ClassResourceInterface
     public function cgetAction(){
         // TODO : Limit view to ROLE_ADMIN
         $em = $this->getDoctrine()->getRepository("UserBundle:Account");
-        $accounts[] = $em->findAll();
+        $accounts = $em->findAll();
         return $accounts;
     }
 
-    /**
-    * Get account info
-    *
-    * @param Account $account
-    * @return Array
-    */
-    private function getAccountInfos(Account $account){
+	/**
+	 * Get account info
+	 *
+	 * @param Account $account
+	 *
+	 * @return null|User|Association
+	 */
+    private function getAccountInfos(Account $account) {
+	    // TODO : Get assos ou user info
+	    $resp   = null;
+	    $infos  = null;
+	    $table  = null;
 
-        // TODO : Get assos ou user info
+	    if ($account->hasRole(Account::ROLE_ASSO)) {
+		    $table = "Association";
+
+	    } elseif ($account->hasRole(Account::ROLE_USER)) {
+		    $table = "User";
+	    }
+
+	    $em = $this->getDoctrine()->getRepository("UserBundle:".$table);
+	    $infos = $em->findOneByAccount($account);
+
+	    if(!$infos){
+		    return new JsonResponse(null, JsonResponse::HTTP_NOT_FOUND);
+	    }
+		/** @var  Association|User $infos */
+	    return $infos;
     }
 
    /**
@@ -240,7 +259,7 @@ class AccountController extends Controller implements ClassResourceInterface
      * )
      * @ParamConverter("account", class="UserBundle:Account")
      *
-     * @Security("has_role('ROLE_DEFAULT')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function getAction(Account $account)
     {
