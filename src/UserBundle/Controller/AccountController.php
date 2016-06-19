@@ -397,16 +397,15 @@ class AccountController extends Controller implements ClassResourceInterface
 		$resp   = null;
 		$infos  = null;
 		$table  = null;
+		$em     = null;
 
 		if ($account->hasRole(Account::ROLE_ASSO)) {
-			$table = "Association";
-
+			$em = $this->getDoctrine()->getRepository("UserBundle:Association");
+			$infos = $em->findOneByAccount($account);
 		} elseif ($account->hasRole(Account::ROLE_USER)) {
-			$table = "User";
+			$em = $this->getDoctrine()->getRepository("UserBundle:Association");
+			$infos = $em->findOneByAccount($account);
 		}
-
-		$em = $this->getDoctrine()->getRepository("UserBundle:".$table);
-		$infos = $em->findOneByAccount($account);
 
 		if(!$infos){
 			return new JsonResponse(null, JsonResponse::HTTP_NOT_FOUND);
