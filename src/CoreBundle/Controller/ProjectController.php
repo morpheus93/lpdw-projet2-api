@@ -48,19 +48,32 @@ class ProjectController extends Controller implements ClassResourceInterface
      *  resource = true,
      *  statusCodes = {
      *     201 = "Returned when successful",
+     *     400 = "Returned when already have project",
      *   }
      * )
      * @FOSRest\RequestParam(name="name", nullable=false, description="Project's name")
      * @FOSRest\RequestParam(name="description", nullable=false, description="Project's description")
+     * @FOSRest\FileParam(name="banner", image=true, default="noPicture")
      *
      */
 	public function postAction(ParamFetcherInterface $paramFetcher){
 		$account = $this->getUser();
         $association = $this->getDoctrine()->getRepository('UserBundle:Association')->findOneBy(["account" => $account]);
 		// TODO : Date publication
-		// TODO : Ajout de l'image
+
+        $waitingProject = $this->getDoctrine()->getRepository('CoreBundle:Project')->getByState($association);
+        if($waitingProject > 0){
+            $resp = array("message" => "You already have a project pending validation");
+            return new JsonResponse($resp, 200);
+        }
+
         $date = new \DateTime();
         $project = new Project();
+        $banner = $paramFetcher->get('banner');
+        $fileName = $this->get('projects.banners_uploader')->upload("banner", $banner);
+        $project->setBanner($fileName);
+
+ 
         $project->setAssociation($association);
         $project->setName($paramFetcher->get('name'));
         $project->setDescription($paramFetcher->get('description'));

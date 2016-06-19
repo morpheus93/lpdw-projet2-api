@@ -11,6 +11,7 @@ parameters:
     locale: fr
     associations_doc_directory: '%kernel.root_dir%/../web/uploads/associations'
     accounts_images_directory: '%kernel.root_dir%/../web/uploads/accounts'
+    projects_banners_directory: '%kernel.root_dir%/../web/uploads/projects'
 
 framework:
     #esi:             ~

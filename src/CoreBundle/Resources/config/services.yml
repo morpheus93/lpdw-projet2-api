@@ -8,3 +8,6 @@ services:
     user.images_uploader:
         class: CoreBundle\Service\FileUploader
         arguments: ['%accounts_images_directory%']
+    projects.banners_uploader:
+        class: CoreBundle\Service\FileUploader
+        arguments: ['%projects_banners_directory%']
