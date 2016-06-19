@@ -12,6 +12,7 @@ use UserBundle\Entity\User;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * Class UserController
@@ -68,6 +69,26 @@ class UserController extends Controller implements ClassResourceInterface
         $em->flush();
 
         return new JsonResponse(null, 201);
+    }
+
+    /**
+     * Get all users
+     *
+     * @return User Empty User array if no user founded
+     *
+     * @ApiDoc(
+     *  section="Users",
+     *  description="Get all users",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *   }
+     * )
+     * @Security("has_role('ROLE_ADMIN')")
+     **/
+    public function cgetAction(){
+        $users = $this->getDoctrine()->getRepository('UserBundle:User')->findAll();
+        return $users;
     }
 
     /**
