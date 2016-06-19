@@ -136,6 +136,7 @@ class ProjectController extends Controller implements ClassResourceInterface
      * )
      * @FOSRest\RequestParam(name="state", requirements="\d+", nullable=false, description="Project's validation")
      *
+     * @Secure(roles="ROLE_ADMIN")
      */
     public function patchValidateAction(Project $project, ParamFetcherInterface $paramFetcher){
 
