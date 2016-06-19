@@ -97,6 +97,8 @@ class AssociationController extends Controller implements ClassResourceInterface
         $em->persist($association);
         $em->flush();
 
+	    $this->sendNewAccountMailToAdmin($account, $association);
+
         return new JsonResponse(null, JsonResponse::HTTP_CREATED);
     }
     
@@ -168,4 +170,29 @@ class AssociationController extends Controller implements ClassResourceInterface
 
 	    return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
+
+	/**
+	 * @param Account     $account
+	 * @param Association $association
+	 */
+	private function sendNewAccountMailToAdmin(Account $account, Association $association){
+
+		$url = $this->getParameter("base_url").$this->getParameter("profile_url");
+
+		$message = \Swift_Message::newInstance()
+			->setSubject('Nouvelle association sur Colab!')
+			->setFrom($this->getParameter('contact_email'))
+			->setTo($this->getParameter('owner_email'))
+			->setBody(
+				$this->renderView(
+					'UserBundle:Emails:SendNewAccountToAdmin.html.twig',
+					array(
+						'confirmationUrl' => $url."/".(int)$account->getId(),
+						'assoName' => $association->getName()
+					)
+				),
+				'text/html'
+			);
+		$this->get('mailer')->send($message);
+	}
 }
