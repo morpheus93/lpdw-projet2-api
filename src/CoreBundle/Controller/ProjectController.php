@@ -14,6 +14,7 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use UserBundle\Entity\Account;
 
 /**
  * Class ProjectController
@@ -77,7 +78,7 @@ class ProjectController extends Controller implements ClassResourceInterface
         $project->setAssociation($association);
         $project->setName($paramFetcher->get('name'));
         $project->setDescription($paramFetcher->get('description'));
-        $project->setVisibility(1);
+        $project->setVisibility(0);
 		$project->setState(1);
         $project->setdatePublication($date);
 
@@ -106,6 +107,8 @@ class ProjectController extends Controller implements ClassResourceInterface
 	 * )
 	 * @FOSRest\RequestParam(name="name", nullable=true, description="Project's name")
 	 * @FOSRest\RequestParam(name="description", nullable=true, description="Project's description")
+     *
+     * @Secure(roles="ROLE_ADMIN")
 	 */
     public function patchAction(Project $project, ParamFetcherInterface $paramFetcher){
         $account = $this->getUser();
@@ -124,11 +127,11 @@ class ProjectController extends Controller implements ClassResourceInterface
      * @param Project               $project
      * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
      *
-     * @return JsonResponse Return 200 and empty array if account was linked OR 400 and error message JSON if error
+     * @return JsonResponse Return 200 and empty array if project is validate OR 400 and error message JSON if error
      *
      * @ApiDoc(
      *  section="Projects",
-     *  description="Update a project",
+     *  description="Validate a project",
      *  resource = true,
      *  statusCodes = {
      *     200 = "Returned when successful",
@@ -142,6 +145,50 @@ class ProjectController extends Controller implements ClassResourceInterface
 
         if($project->getState() == "waiting validation"){
             $project->setState($paramFetcher->get('state'));
+            $project->setVisibility(1);
+        } else {
+            $resp = array("message" => "This project is not in waiting validation");
+            return new JsonResponse($resp, 400);
+        }
+        
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($project);
+        $em->flush();
+        return new JsonResponse(null, 200);
+    }
+
+    /**
+     * Done a project
+     *
+     * @param Project               $project
+     * @param ParamFetcherInterface $paramFetcher Contain all body parameters received
+     *
+     * @return JsonResponse Return 200 and empty array if account was linked OR 400 and error message JSON if error
+     *
+     * @ApiDoc(
+     *  section="Projects",
+     *  description="Done a project",
+     *  resource = true,
+     *  statusCodes = {
+     *     200 = "Returned when successful",
+     *   }
+     * )
+     * @FOSRest\RequestParam(name="state", requirements="(done)", nullable=false, description="Project's done")
+     *
+     * @Secure(roles="ROLE_ASSO")
+     */
+    public function patchDoneAction(Project $project, ParamFetcherInterface $paramFetcher){
+        $account = $this->getUser();
+        $association = $this->getDoctrine()->getRepository('UserBundle:Association')->findOneByAccount($account);
+
+        if($project->getAssociation() != $association){
+            $resp = array("message" => "Access denied");
+            return new JsonResponse($resp, 401);
+        }
+ 
+        if($project->getState() != "refused"){
+            $project->setState($paramFetcher->get('state'));
+            $project->setVisibility(3);
         } else {
             $resp = array("message" => "This project is not in waiting validation");
             return new JsonResponse($resp, 400);
@@ -169,7 +216,14 @@ class ProjectController extends Controller implements ClassResourceInterface
 	**/
     public function cgetAction()
     {
-    	$projects = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
+        $account = $this->getUser();
+
+        if ($account->hasRole(Account::ROLE_SUPER_ADMIN)) {
+            $projects = $this->getDoctrine()->getRepository('CoreBundle:Project')->findAll();
+        } elseif ($account->hasRole(Account::ROLE_DEFAULT)) {
+            $projects = $this->getDoctrine()->getRepository('CoreBundle:Project')->findByVisibility(1);
+        }
+    	
     	return $projects;
     }
 
