@@ -56,8 +56,7 @@ class AssociationController extends Controller implements ClassResourceInterface
      * @FOSRest\RequestParam(name="leader_name", nullable=false, description="Association's leader name")
      * @FOSRest\RequestParam(name="leader_phone", nullable=false, description="Association's leader phone")
      * @FOSRest\RequestParam(name="leader_email", nullable=false, description="Association's leader email")
-     * @FOSRest\RequestParam(name="files", nullable=false, description="Association's confirmation files")
-     * @FOSRest\FileParam(name="asso_files", nullable=false, requirements={"mimeTypes"= {"image/png", "image/jpeg", "application/pdf", "image/bmp"}, "maxSize"="2000k"}, description="Association's document",strict=true)
+     * @FOSRest\FileParam(name="asso_file", nullable=false, requirements={"mimeTypes"= {"image/png", "image/jpeg", "application/pdf", "image/bmp"}, "maxSize"="2000k"}, description="Association's document",strict=true)
      * @Security("has_role('ROLE_DEFAULT')")
      */
     public function postAction(ParamFetcherInterface $paramFetcher){
@@ -75,7 +74,7 @@ class AssociationController extends Controller implements ClassResourceInterface
 		$association->setAccount($account);
 
 		$account->addRole(Account::ROLE_ASSO);
-        $file = $paramFetcher->get('asso_files');
+        $file = $paramFetcher->get('asso_file');
         $fileName = $this->get('user.documents_uploader')->upload($paramFetcher->get('code'), $file);
         $association->setFiles($fileName);
 
